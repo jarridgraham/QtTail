@@ -16,21 +16,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QApplication>
-//#include <QMainWindow>
-#include "mainwindow.h"
+#ifndef _MDICHILD__H
+#define _MDICHILD__H
 
-int 
-main (int argc, char **argv)
+#include <QTextEdit>
+#include <QTextStream>
+
+class MDIChild: public QTextEdit
 {
-	QApplication app (argc, argv);
+	Q_OBJECT
+	
+	QString curFile;
+	QTextStream* curStream;
+protected:
+	void closeEvent(QCloseEvent *event);
+	
+public:
+	MDIChild(const QString& fileName);
+	virtual ~MDIChild();
+	QString currentFile() const { return curFile; }
 
-// 	QMainWindow w;
-// 	Ui::MainWindow main;
-// 	main.setupUi (&w);
-// 	w.show ();
-	MainWindow w;
-	w.show();
+	
+};
 
-	return app.exec ();
-}
+#endif

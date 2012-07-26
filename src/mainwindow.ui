@@ -1,44 +1,95 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow" >
-  <property name="geometry" >
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>336</width>
-    <height>227</height>
+    <width>1080</width>
+    <height>570</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>QtTail</string>
   </property>
-  <widget class="QWidget" name="centralWidget" >
-   <layout class="QGridLayout" name="gridLayout" >
-    <item row="0" column="0" >
-     <widget class="QCalendarWidget" name="calendarWidget" />
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QMdiArea" name="mdiArea"/>
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menuBar" >
-   <property name="geometry" >
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>336</width>
-     <height>29</height>
+     <width>1080</width>
+     <height>24</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile" >
-    <property name="title" >
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionQuit" />
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionClose"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
    </widget>
-   <addaction name="menuFile" />
+   <widget class="QMenu" name="menuFilter">
+    <property name="title">
+     <string>Filter</string>
+    </property>
+    <addaction name="actionHighlight"/>
+    <addaction name="actionSuppress"/>
+   </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>About</string>
+    </property>
+    <addaction name="actionQTail"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuFilter"/>
+   <addaction name="menuAbout"/>
   </widget>
-  <action name="actionQuit" >
-   <property name="text" >
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionQuit">
+   <property name="text">
     <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save output</string>
+   </property>
+  </action>
+  <action name="actionHighlight">
+   <property name="text">
+    <string>Highlight</string>
+   </property>
+  </action>
+  <action name="actionSuppress">
+   <property name="text">
+    <string>Suppress</string>
+   </property>
+  </action>
+  <action name="actionQTail">
+   <property name="text">
+    <string>QTail</string>
    </property>
   </action>
  </widget>
@@ -50,11 +101,11 @@
    <receiver>MainWindow</receiver>
    <slot>close()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>-1</x>
      <y>-1</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>167</x>
      <y>113</y>
     </hint>

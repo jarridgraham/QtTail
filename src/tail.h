@@ -16,21 +16,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QApplication>
-//#include <QMainWindow>
-#include "mainwindow.h"
 
-int 
-main (int argc, char **argv)
+#ifndef TAIL_H
+#define TAIL_H
+
+#include <QThread>
+#include <QMutex>
+
+class Tail: public QThread
 {
-	QApplication app (argc, argv);
+	QString fileName;
+	bool abort;
+	QMutex mutex;
 
-// 	QMainWindow w;
-// 	Ui::MainWindow main;
-// 	main.setupUi (&w);
-// 	w.show ();
-	MainWindow w;
-	w.show();
+	void goToPosition(QTextStream& in);
+protected:
+	void run();
 
-	return app.exec ();
-}
+signals:
+	void sendLine(QString line);
+	void Error (QString arg);	
+
+public slots:
+	void stopProcess();
+
+
+public:
+	Tail (QString file, QObject* parent);
+	virtual ~Tail ();
+};
+
+#endif // TAIL_H
