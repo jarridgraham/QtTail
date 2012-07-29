@@ -8,6 +8,6 @@ DEPENDPATH += . src
 INCLUDEPATH += . src
 
 # Input
-HEADERS += src/mainwindow.h src/mdichild.h
+HEADERS += src/mainwindow.h src/mdichild.h src/tail.h
 FORMS += src/mainwindow.ui
-SOURCES += src/main.cpp src/mainwindow.cpp src/mdichild.cpp
+SOURCES += src/main.cpp src/mainwindow.cpp src/mdichild.cpp src/tail.cpp

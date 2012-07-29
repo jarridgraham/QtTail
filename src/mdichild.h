@@ -20,14 +20,15 @@
 #define _MDICHILD__H
 
 #include <QTextEdit>
-#include <QTextStream>
+
+#include "tail.h"
 
 class MDIChild: public QTextEdit
 {
 	Q_OBJECT
 	
-	QString curFile;
-	QTextStream* curStream;
+ 	QString curFile;
+	
 protected:
 	void closeEvent(QCloseEvent *event);
 	
@@ -36,7 +37,8 @@ public:
 	virtual ~MDIChild();
 	QString currentFile() const { return curFile; }
 
-	
+public slots:
+	void receiveLine(QString file, QString line);
 };
 
 #endif

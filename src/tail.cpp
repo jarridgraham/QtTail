@@ -23,36 +23,54 @@
 #include <QTextStream>
 #include <QFile>
 #include <QStringList>
+#include <QMutexLocker>
+#include <QDebug>
 
-Tail::Tail (QString file, QObject* parent): fileName(file),abort(false), QThread(parent)
+Tail::Tail (QObject* parent): QThread(parent), abort(false), valid(true)
 {
-
+	if ( !in.open(QFile::ReadOnly | QFile::Text) )
+	{
+		valid = false;
+		//_error = QString(tr("Cannot open %1 - %2 ")).arg(fileName).arg(QFile.errorString);
+	}
+	qDebug() << "Tail instantiated!" << currentThreadId();
 }
+
+bool Tail::addFile(QString fileName)
+{
+	QFile current = new QFile(fileName, this);
+	if ( !current.open(QFile::ReadOnly | QFile::Text) )
+	{
+		return false;
+		//valid = false;
+		//_error = QString(tr("Cannot open %1 - %2 ")).arg(fileName).arg(QFile.errorString);
+	}
+}
+
 
 Tail::~Tail ()
 {
-	mutex.lock();
+	QMutexLocker lock(&mutex);
 	abort = true;
-	mutex.unlock();
+	waiter.wakeOne();
 }
 
 void Tail::stopProcess()
 {
-	mutex.lock();
+	QMutexLocker lock(&mutex);
 	abort = true;
-	mutex.unlock();
+	waiter.wakeOne();
 }
 
 void
-Tail::goToPosition (QTextStream& in)
+Tail::goToPosition ()
 {
 	QStringList lines;
-
 	QString line;
 	
 	while (  ! in.atEnd() )
 	{
-		line = in.readLine()
+		line = in.readLine();
 		lines.push_back ( in.readLine() );
 
 		if ( lines.count() > 5 )
@@ -64,24 +82,35 @@ Tail::goToPosition (QTextStream& in)
 		emit sendLine(line);
 }
 
+void Tail::checkLine()
+{
+	QMutexLocker locker(&mutex);
+	waiter.wakeAll();
+}
+
 
 void
 Tail::run ()
 {
-	QFile file(fileName);
-	if ( !file.open(QFile::ReadOnly | QFile::Text) )
+	QString line;	
+	goToPosition();
+
+	qDebug() << "Thread: " << currentThreadId();
+	
+	QTimer* polling = new QTimer(this);
+	connect(polling,SIGNAL(timeout()),this,checkLine());
+	polling->setInterval(1000);
+	polling->setSingleShot(false);
+	
+	QMutexLocker lock(&mutex);
+	forever 
 	{
-		emit Error(tr("Cannot open %1 - %2 ").arg(fileName).arg(QFile.errorString));
-		return;
-	}
-
-	QTextString in(file);
-
-	goToPosition(in);
-
-	while (!abort )
-	{
+		qDebug() << "Reading 1 line of text" << currentThreadId();
+		waiter.wait(&mutex);
+		if (abort)
+			return;
 		line = in.readLine();
-		emit sendLine(line);
+		if ( line.length() > 0 )
+			emit sendLine(line);
 	}
 }

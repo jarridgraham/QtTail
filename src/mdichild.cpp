@@ -26,17 +26,20 @@ MDIChild::closeEvent (QCloseEvent * event)
 
 }
 
-MDIChild::MDIChild(const QString& fileName): curFile(fileName)
+MDIChild::MDIChild(const QString& fileName): curFile(fileName),
 {
-	QFile file(fileName);
-	file.open(QFile::ReadOnly | QFile::Text);
-	
-	curStream = new QTextStream(&file);
-
-	setPlainText(curStream->readAll());
+	qDebug() << "MDIChild coming";
 }
 
 MDIChild::~MDIChild ()
 {
-	delete curStream;
 }
+
+void MDIChild::receiveLine (QString file, QString line )
+{
+	if ( file != curFile )
+		return;
+	qDebug() << "Line received!";
+	append(line);
+}
+

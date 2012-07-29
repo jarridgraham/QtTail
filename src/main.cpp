@@ -17,7 +17,6 @@
 */
 
 #include <QApplication>
-//#include <QMainWindow>
 #include "mainwindow.h"
 
 int 
@@ -25,10 +24,6 @@ main (int argc, char **argv)
 {
 	QApplication app (argc, argv);
 
-// 	QMainWindow w;
-// 	Ui::MainWindow main;
-// 	main.setupUi (&w);
-// 	w.show ();
 	MainWindow w;
 	w.show();
 

@@ -22,27 +22,41 @@
 
 #include <QThread>
 #include <QMutex>
+#include <QFile>
+#include <QWaitCondition>
+#include <QTimer>
 
 class Tail: public QThread
 {
-	QString fileName;
+	Q_OBJECT
+	
 	bool abort;
 	QMutex mutex;
+	
+	QList<QFile> in;
+	
+	bool valid;
+	QString _error;
+	QWaitCondition waiter;
 
-	void goToPosition(QTextStream& in);
-protected:
-	void run();
+	void goToPosition(const QFile& file);
 
 signals:
-	void sendLine(QString line);
-	void Error (QString arg);	
+	void sendLine(QString fileName, QString line);
+	void Error (QString arg);
+	
+private slots:
+	void checkLine();
 
 public slots:
 	void stopProcess();
 
-
 public:
-	Tail (QString file, QObject* parent);
+	Tail (QObject* parent);
+	bool addFile(QString fileName);
+	virtual void run();
+	bool isValid() const { return valid; }
+	QString error() const { return _error; }
 	virtual ~Tail ();
 };
 

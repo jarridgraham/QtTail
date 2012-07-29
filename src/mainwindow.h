@@ -27,10 +27,13 @@ class MainWindow: public QMainWindow, private Ui::MainWindow
 {
 	Q_OBJECT
 
+	Tail* worker;
+	
 	void readSettings();
 
 	MDIChild* createMDIChild(const QString& fileName);
 	QMdiSubWindow* findMDIChild(const QString &fileName);
+	
 private slots:
 	void on_actionOpen_triggered();
 	void on_actionSave_triggered();
