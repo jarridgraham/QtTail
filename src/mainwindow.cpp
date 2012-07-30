@@ -23,7 +23,7 @@
 #include <QMdiSubWindow>
 #include <QDebug>
 
-MainWindow::MainWindow ():QMainWindow (0), worker(0)
+MainWindow::MainWindow ():QMainWindow (0)
 {
 	setupUi(this);
 	Ui_MainWindow::statusBar->showMessage(tr("Going"), 1000);
@@ -50,12 +50,8 @@ void MainWindow::readSettings()
 
 MDIChild *MainWindow::createMDIChild(const QString& fileName)
 {
-	if ( worker == 0 )
-		worker = new Tail(this);
 	qDebug() << "Qui..." + fileName;
 	MDIChild *child = new MDIChild(fileName);
-	
-	connect(worker,SIGNAL(sendLine(QString, QString)), child,SLOT(receiveLine(QString, QString)));
 	
 	mdiArea->addSubWindow(child);
 	child->show();

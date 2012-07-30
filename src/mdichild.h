@@ -28,17 +28,18 @@ class MDIChild: public QTextEdit
 	Q_OBJECT
 	
  	QString curFile;
-	
+	Tail* worker;
 protected:
 	void closeEvent(QCloseEvent *event);
 	
 public:
 	MDIChild(const QString& fileName);
 	virtual ~MDIChild();
+	bool isValid() const;
 	QString currentFile() const { return curFile; }
 
 public slots:
-	void receiveLine(QString file, QString line);
+	void receiveLine(QString line);
 };
 
 #endif

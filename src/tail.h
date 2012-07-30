@@ -33,16 +33,16 @@ class Tail: public QThread
 	bool abort;
 	QMutex mutex;
 	
-	QList<QFile> in;
+	QFile in;
 	
 	bool valid;
 	QString _error;
 	QWaitCondition waiter;
 
-	void goToPosition(const QFile& file);
+	void goToPosition();
 
 signals:
-	void sendLine(QString fileName, QString line);
+	void sendLine(QString line);
 	void Error (QString arg);
 	
 private slots:
@@ -52,8 +52,8 @@ public slots:
 	void stopProcess();
 
 public:
-	Tail (QObject* parent);
-	bool addFile(QString fileName);
+	Tail (QString fileName, QObject* parent);
+	//bool addFile(QString fileName);
 	virtual void run();
 	bool isValid() const { return valid; }
 	QString error() const { return _error; }

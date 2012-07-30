@@ -26,20 +26,33 @@ MDIChild::closeEvent (QCloseEvent * event)
 
 }
 
-MDIChild::MDIChild(const QString& fileName): curFile(fileName),
+MDIChild::MDIChild(const QString& fileName): curFile(fileName)
 {
 	qDebug() << "MDIChild coming";
+	worker = new Tail(fileName, this);
+	if ( worker != NULL && worker->isValid() )
+	{
+		connect(worker, SIGNAL(sendLine(QString)), this, SLOT(receiveLine(QString)), Qt::QueuedConnection);
+		worker->start();
+	}
+	else
+		curFile = QString();
+	
+}
+
+bool
+MDIChild::isValid () const
+{
+	return worker->isValid() && ( curFile.size() > 0 );
 }
 
 MDIChild::~MDIChild ()
 {
 }
 
-void MDIChild::receiveLine (QString file, QString line )
+void MDIChild::receiveLine (QString line)
 {
-	if ( file != curFile )
-		return;
-	qDebug() << "Line received!";
+	qDebug() << "Line received:" << line ;
 	append(line);
 }
 

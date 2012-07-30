@@ -21,12 +21,11 @@
 
 #include <QFile>
 #include <QTextStream>
-#include <QFile>
 #include <QStringList>
 #include <QMutexLocker>
 #include <QDebug>
 
-Tail::Tail (QObject* parent): QThread(parent), abort(false), valid(true)
+Tail::Tail (QString fileName, QObject* parent): QThread(parent), abort(false), in(fileName), valid(true)
 {
 	if ( !in.open(QFile::ReadOnly | QFile::Text) )
 	{
@@ -34,18 +33,19 @@ Tail::Tail (QObject* parent): QThread(parent), abort(false), valid(true)
 		//_error = QString(tr("Cannot open %1 - %2 ")).arg(fileName).arg(QFile.errorString);
 	}
 	qDebug() << "Tail instantiated!" << currentThreadId();
+
 }
 
-bool Tail::addFile(QString fileName)
-{
-	QFile current = new QFile(fileName, this);
-	if ( !current.open(QFile::ReadOnly | QFile::Text) )
-	{
-		return false;
-		//valid = false;
-		//_error = QString(tr("Cannot open %1 - %2 ")).arg(fileName).arg(QFile.errorString);
-	}
-}
+// bool Tail::addFile(QString fileName)
+// {
+// 	QFile current = new QFile(fileName, this);
+// 	if ( !current.open(QFile::ReadOnly | QFile::Text) )
+// 	{
+// 		return false;
+// 		//valid = false;
+// 		//_error = QString(tr("Cannot open %1 - %2 ")).arg(fileName).arg(QFile.errorString);
+// 	}
+// }
 
 
 Tail::~Tail ()
@@ -65,6 +65,7 @@ void Tail::stopProcess()
 void
 Tail::goToPosition ()
 {
+	qDebug() << "goToPosition: " << currentThreadId();
 	QStringList lines;
 	QString line;
 	
@@ -97,20 +98,21 @@ Tail::run ()
 
 	qDebug() << "Thread: " << currentThreadId();
 	
-	QTimer* polling = new QTimer(this);
-	connect(polling,SIGNAL(timeout()),this,checkLine());
-	polling->setInterval(1000);
-	polling->setSingleShot(false);
-	
 	QMutexLocker lock(&mutex);
 	forever 
 	{
 		qDebug() << "Reading 1 line of text" << currentThreadId();
-		waiter.wait(&mutex);
+		waiter.wait(&mutex, 1500);
 		if (abort)
 			return;
-		line = in.readLine();
-		if ( line.length() > 0 )
-			emit sendLine(line);
+		//line = in.readLine();
+		while ( ! in.atEnd() )
+		{	
+			line = in.read(1024);
+			qDebug() << "Error? " << in.errorString();
+			qDebug() << "Sending line " << line;
+			if ( line.length() > 0 )
+				emit sendLine(line);
+		}
 	}
 }

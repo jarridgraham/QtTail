@@ -1,1 +1,0 @@
-- Can we use waitForReadyRead with a QFile to implement a tail -f in QT? We need a test.
