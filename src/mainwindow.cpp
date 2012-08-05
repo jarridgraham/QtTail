@@ -52,7 +52,8 @@ MDIChild *MainWindow::createMDIChild(const QString& fileName)
 {
 	qDebug() << "Qui..." + fileName;
 	MDIChild *child = new MDIChild(fileName);
-	
+
+	//TODO set filters!
 	mdiArea->addSubWindow(child);
 	child->show();
 

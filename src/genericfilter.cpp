@@ -17,20 +17,20 @@
 */
 
 
-#include "highlighter.h"
+#include "genericfilter.h"
 
-Highlighter::Highlighter (QTextDocument* parent ): QSyntaxHighlighter(parent)
+bool
+GenericFilter::match (const QString & s)
 {
-
-}
-
-Highlighter::~Highlighter ()
-{
-
-}
-
-void
-Highlighter::highlightBlock (const QString & text)
-{
-
+	if ( ! filterString.isEmpty() )
+	{
+		if ( s.contains(filterString) )
+			return true;
+	}
+	if ( ! filterReg.isEmpty() )
+	{
+		if ( s.contains(filterReg) )
+			return true;
+	}
+	return false;
 }

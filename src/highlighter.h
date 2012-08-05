@@ -1,5 +1,5 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
+    QTail is a simple graphical implementation of tail -f
     Copyright (C) 2012  Tazio Ceri <praise@praisenet.darktech.org>
 
     This program is free software: you can redistribute it and/or modify
@@ -20,12 +20,21 @@
 #ifndef HIGHLIGHTER_H
 #define HIGHLIGHTER_H
 
-class Highlighter
-{
+#include <QSyntaxHighlighter>
+#include <QTextCharFormat>
+#include <QHash>
+#include "genericfilter.h"
 
+class Highlighter: public QSyntaxHighlighter
+{
+	//TODO highligher implementation
+	QHash<GenericFilter,QTextCharFormat> filters;
+	
+protected:
+	void highlightBlock(const QString &text);
 public:
-  Highlighter ();
-  virtual ~ Highlighter ();
+	Highlighter (QTextDocument* parent = 0);
+	virtual ~ Highlighter ();
 };
 
 #endif // HIGHLIGHTER_H

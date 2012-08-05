@@ -20,7 +20,9 @@
 #define _MDICHILD__H
 
 #include <QTextEdit>
-
+#include <QList>
+#include "highlighter.h"
+#include "genericfilter.h"
 #include "tail.h"
 
 class MDIChild: public QTextEdit
@@ -29,12 +31,18 @@ class MDIChild: public QTextEdit
 	
  	QString curFile;
 	Tail* worker;
+	QList<GenericFilter> suppressiveFilter;
+	Highlighter* highlighter;
 protected:
 	void closeEvent(QCloseEvent *event);
 	
 public:
 	MDIChild(const QString& fileName);
 	virtual ~MDIChild();
+	bool addFilter(const GenericFilter& filter, const QTextCharFormat& format);
+	bool resetFilters();
+	bool addSuppressor( const GenericFilter& filter);
+	bool resetSuppressors();
 	bool isValid() const;
 	QString currentFile() const { return curFile; }
 

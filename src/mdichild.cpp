@@ -37,6 +37,15 @@ MDIChild::MDIChild(const QString& fileName): curFile(fileName)
 		worker->start();
 
 		setWindowTitle(fileName);
+
+		highlighter = new Highlighter(document());
+		if ( highlighter == NULL )
+		{
+			delete worker;
+			curFile = QString();
+			return;
+		}
+
 	}
 	else
 		curFile = QString();

@@ -17,20 +17,19 @@
 */
 
 
-#include "highlighter.h"
+#ifndef GENERICFILTER_H
+#define GENERICFILTER_H
+#include <QString>
+#include <QRegExp>
 
-Highlighter::Highlighter (QTextDocument* parent ): QSyntaxHighlighter(parent)
+class GenericFilter
 {
+	QString filterString;
+	QRegExp filterReg;
+public:
+	GenericFilter (const QString& filter): filterString(filter) {}
+	GenericFilter (const QRegExp& filter): filterReg(filter) {}
+	bool match(const QString& s);
+};
 
-}
-
-Highlighter::~Highlighter ()
-{
-
-}
-
-void
-Highlighter::highlightBlock (const QString & text)
-{
-
-}
+#endif // GENERICFILTER_H
