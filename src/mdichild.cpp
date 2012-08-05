@@ -19,6 +19,7 @@
 #include "mdichild.h"
 #include <QDebug>
 #include <QFile>
+#include <QTextCursor>
 
 void
 MDIChild::closeEvent (QCloseEvent * event)
@@ -34,6 +35,8 @@ MDIChild::MDIChild(const QString& fileName): curFile(fileName)
 	{
 		connect(worker, SIGNAL(sendLine(QString)), this, SLOT(receiveLine(QString)), Qt::QueuedConnection);
 		worker->start();
+
+		setWindowTitle(fileName);
 	}
 	else
 		curFile = QString();
@@ -53,6 +56,8 @@ MDIChild::~MDIChild ()
 void MDIChild::receiveLine (QString line)
 {
 	qDebug() << "Line received:" << line ;
-	append(line);
+
+	textCursor().insertText(line);
+	//append(line);
 }
 
