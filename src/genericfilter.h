@@ -26,9 +26,11 @@ class GenericFilter
 {
 	QString filterString;
 	QRegExp filterReg;
+	int priority;
 public:
-	GenericFilter (const QString& filter): filterString(filter) {}
-	GenericFilter (const QRegExp& filter): filterReg(filter) {}
+	GenericFilter (int prio, const QString& filter): filterString(filter), priority(prio) {}
+	GenericFilter (int prio, const QRegExp& filter): filterReg(filter), priority(prio) {}
+	bool operator<(const GenericFilter& other) const { return priority < other.priority; }
 	bool match(const QString& s);
 };
 

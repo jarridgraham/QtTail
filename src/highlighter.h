@@ -22,13 +22,13 @@
 
 #include <QSyntaxHighlighter>
 #include <QTextCharFormat>
-#include <QHash>
+#include <QMap>
 #include "genericfilter.h"
 
 class Highlighter: public QSyntaxHighlighter
 {
 	//TODO highligher implementation
-	QHash<GenericFilter,QTextCharFormat> filters;
+	QMap<GenericFilter,QTextCharFormat> filters;
 	
 protected:
 	void highlightBlock(const QString &text);

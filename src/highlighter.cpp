@@ -32,5 +32,13 @@ Highlighter::~Highlighter ()
 void
 Highlighter::highlightBlock (const QString & text)
 {
-
+	//TODO
+	// We need a logic for strings that match multiple filter
+	foreach (GenericFilter g, filters.keys() )
+	{
+		if ( g.match(text) )
+		{
+			setFormat(0, text.length(), filters.value(g) );
+		}
+	}
 }
