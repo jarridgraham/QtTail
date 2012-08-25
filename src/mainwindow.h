@@ -20,25 +20,37 @@
 #define  __MAINWINDOW__H
 
 #include <QWidget>
+#include <QTextCharFormat>
+#include <QHash>
+
+#include "newfilter.h"
+
 #include "ui_mainwindow.h"
 class MDIChild;
 
 class MainWindow: public QMainWindow, private Ui::MainWindow
 {
 	Q_OBJECT
-	
-	void readSettings();
 
+	NewFilter* newfilter;
+
+	QHash<GenericFilter,QTextCharFormat> filterPool;
+
+	void loadFilterPool(QString namefile);
+	void saveFilterPool(QString namefile);
 	MDIChild* createMDIChild(const QString& fileName);
 	QMdiSubWindow* findMDIChild(const QString &fileName);
-	
+
 private slots:
 	void on_actionOpen_triggered();
 	void on_actionSave_triggered();
 	void on_actionClose_triggered();
-	void on_actionHighlight_triggered();
-	void on_actionSuppress_triggered();
+	void on_actionFilter_configuration_triggered();
+	void on_actionNew_filter_triggered();
+	void on_actionFilter_pool_triggered();
 	void on_actionQTail_triggered();
+
+	void newFilter();
 protected:
 	void changeEvent(QEvent *e);
 	void closeEvent(QEvent* e){};

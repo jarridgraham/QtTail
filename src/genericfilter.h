@@ -20,18 +20,42 @@
 #ifndef GENERICFILTER_H
 #define GENERICFILTER_H
 #include <QString>
+#include <QHash>
+#include <QDataStream>
 #include <QRegExp>
+
+enum filterType { REGEXP = 1, MATCH = 0 };
+enum filterBehaviour { HIGHLIGHT = 0, SUPPRESS = 1 };
 
 class GenericFilter
 {
+	QString name_;
 	QString filterString;
 	QRegExp filterReg;
 	int priority;
+	bool suppressor;
+	friend uint qHash(const GenericFilter& filter);
+	friend QDataStream &operator<<(QDataStream &, const GenericFilter &);
+	friend QDataStream &operator>>(QDataStream &, GenericFilter &);
 public:
-	GenericFilter (int prio, const QString& filter): filterString(filter), priority(prio) {}
-	GenericFilter (int prio, const QRegExp& filter): filterReg(filter), priority(prio) {}
+	GenericFilter(): priority(-1), suppressor(false) {}
+	GenericFilter (const QString& filter, bool suppress = false): filterString(filter),suppressor(suppress) {}
+	GenericFilter (const QRegExp& filter, bool suppress = false): filterReg(filter), suppressor(suppress) {}
+	void setPriority(int prio) { priority= prio; }
+	int getPriority() const { return priority; }
+	QString getName() const { return name_; }
+	void setString(QString filter) { filterString = filter; filterReg = QRegExp(); }
+	void setString(QRegExp filter) { filterReg = filter; filterString.clear(); }
+	void setName(QString n) { name_ = n; }
+	QString getString() const;
 	bool operator<(const GenericFilter& other) const { return priority < other.priority; }
+	bool operator==(const GenericFilter& other) const;
 	bool match(const QString& s);
+	bool isSuppressor() const { return suppressor; }
 };
+
+uint qHash(const GenericFilter& filter);
+QDataStream &operator<<(QDataStream &, const GenericFilter &);
+QDataStream &operator>>(QDataStream &, GenericFilter &);
 
 #endif // GENERICFILTER_H

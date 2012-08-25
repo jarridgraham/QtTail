@@ -24,6 +24,10 @@ main (int argc, char **argv)
 {
 	QApplication app (argc, argv);
 
+	app.setOrganizationDomain("praisenet.darktech.org");
+	app.setOrganizationName("Praise");
+	app.setApplicationName("QtTail");
+
 	MainWindow w;
 	w.show();
 

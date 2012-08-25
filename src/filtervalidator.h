@@ -17,41 +17,26 @@
 */
 
 
-#include "highlighter.h"
+#ifndef FILTERVALIDATOR_H
+#define FILTERVALIDATOR_H
 
-Highlighter::Highlighter (QTextDocument* parent ): QSyntaxHighlighter(parent)
+#include "genericfilter.h"
+#include <QValidator>
+
+class FilterValidator:public QValidator
 {
+	Q_OBJECT
+	
+	filterType state;	//Regexp or not?
 
-}
+	QValidator* myValidator;
+public:
+	virtual QValidator::State validate (QString &, int &) const;
+	explicit FilterValidator (const filterType& type, QObject* obj = 0 );
+	virtual void fixup (QString &) const;
+	virtual ~ FilterValidator () { delete myValidator; } 
+public slots:
+	void changeState(filterType type);
+};
 
-Highlighter::~Highlighter ()
-{
-
-}
-
-void
-Highlighter::highlightBlock (const QString & text)
-{
-	//TODO
-	// We need a logic for strings that match multiple filter
-	foreach (GenericFilter g, filters.keys() )
-	{
-		if ( g.match(text) )
-		{
-			setFormat(0, text.length(), filters.value(g) );
-		}
-	}
-}
-
-void
-Highlighter::addFilter (const GenericFilter & filter,
-			const QTextCharFormat & fmt)
-{
-	filters.insert(filter, fmt);
-}
-
-void
-Highlighter::filterReset ()
-{
-	filters.clear();
-}
+#endif // FILTERVALIDATOR_H

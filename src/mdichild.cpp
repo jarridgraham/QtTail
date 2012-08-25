@@ -70,3 +70,24 @@ void MDIChild::receiveLine (QString line)
 	//append(line);
 }
 
+bool MDIChild::addFilter(const GenericFilter& filter, const QTextCharFormat& format)
+{
+	if ( filter.isSuppressor() )
+		return false;
+	if ( highlightFilter.contains( filter ) )
+		return false;
+	highlightFilter.insert(filter, format);
+	return true;
+}
+
+bool MDIChild::addSuppressor(const GenericFilter& filter)
+{
+	if ( ! filter.isSuppressor() )
+		return false;
+	
+	if ( suppressiveFilter.contains( filter ) )
+		return false;
+	suppressiveFilter.append(filter);
+	return true;
+}
+

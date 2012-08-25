@@ -17,41 +17,25 @@
 */
 
 
-#include "highlighter.h"
+#include "filterconfig.h"
+#include "genericfilter.h"
+#include <QEvent>
 
-Highlighter::Highlighter (QTextDocument* parent ): QSyntaxHighlighter(parent)
+void FilterConfig :: changeEvent(QEvent *e)
 {
-
-}
-
-Highlighter::~Highlighter ()
-{
-
-}
-
-void
-Highlighter::highlightBlock (const QString & text)
-{
-	//TODO
-	// We need a logic for strings that match multiple filter
-	foreach (GenericFilter g, filters.keys() )
+	QWidget::changeEvent(e);
+	switch (e->type())
 	{
-		if ( g.match(text) )
-		{
-			setFormat(0, text.length(), filters.value(g) );
-		}
+		case QEvent::LanguageChange:
+			ui.retranslateUi(this);
+			break;
+		default:
+			break;
 	}
 }
 
-void
-Highlighter::addFilter (const GenericFilter & filter,
-			const QTextCharFormat & fmt)
+FilterConfig::FilterConfig (QAbstractTableModel * mod, FilterConfigType Type, QWidget * parent):
+	QDialog(parent), type(Type), Model(mod)
 {
-	filters.insert(filter, fmt);
-}
-
-void
-Highlighter::filterReset ()
-{
-	filters.clear();
+	ui.setupUi(this);
 }

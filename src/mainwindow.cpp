@@ -18,15 +18,26 @@
 
 #include "mainwindow.h"
 #include "mdichild.h"
+#include "filterconfig.h"
+#include "filtermodel.h"
+#include "newfilter.h"
 
 #include <QFileDialog>
 #include <QMdiSubWindow>
+#include <QSettings>
+
 #include <QDebug>
 
 MainWindow::MainWindow ():QMainWindow (0)
 {
 	setupUi(this);
 	Ui_MainWindow::statusBar->showMessage(tr("Going"), 1000);
+
+	QSettings settings;
+	QString filename = settings.value("filtersfilename", QString()).toString();
+
+	if ( ! filename.isEmpty() && ! filename.isNull() )
+		loadFilterPool(filename);
 }
 
 void MainWindow ::changeEvent(QEvent *e)
@@ -42,9 +53,39 @@ void MainWindow ::changeEvent(QEvent *e)
 	}
 }
 
-void MainWindow::readSettings()
+void
+MainWindow::loadFilterPool (QString namefile)
 {
-	//TODO
+	QFile file(namefile);
+	file.open(QIODevice::ReadOnly);
+
+	QDataStream loader(&file);
+
+	GenericFilter filter;
+	QTextCharFormat format;
+
+	while ( ! loader.atEnd() )
+	{
+		loader >> filter;
+		loader >> format;
+		filterPool.insert( filter, format );
+	}
+
+}
+
+void
+MainWindow::saveFilterPool (QString namefile)
+{
+	QFile file(namefile);
+	file.open(QIODevice::WriteOnly);
+
+	QDataStream writer(&file);
+
+	for (  QHash<GenericFilter, QTextCharFormat>::const_iterator it = filterPool.constBegin(); it != filterPool.constEnd(); ++it )
+	{
+		writer << it.key();
+		writer << it.value();
+	}
 }
 
 
@@ -82,19 +123,70 @@ void
 MainWindow::on_actionClose_triggered ()
 {
 	//! @todo TODO Closing to manage!
+	QSettings settings;
+	QString filename = settings.value("filtersfilename", QString()).toString();
+
+	saveFilterPool(filename);
 }
 
 
 void
-MainWindow::on_actionSuppress_triggered ()
+MainWindow::on_actionFilter_configuration_triggered ()
 {
+	QAbstractTableModel* model = new FilterModel(); //TODO
 
+	QDialog* filter = new FilterConfig(model, DOCUMENT,this);
+
+	filter->show();
 }
 
 void
-MainWindow::on_actionHighlight_triggered ()
+MainWindow::on_actionNew_filter_triggered ()
 {
+	newfilter = new NewFilter(this);
 
+	connect(newfilter,SIGNAL(accepted()),this,SLOT(newFilter()));
+
+	newfilter->show();
+}
+
+void
+MainWindow::newFilter ()
+{
+	qDebug() << "newFilter handler called!";
+	QPair<GenericFilter, QTextCharFormat> filter = newfilter->getFilterAndFormat();
+
+	filterPool.insert ( filter.first, filter.second );
+
+	qDebug() << "Filter pool " << filterPool.count();
+	QMdiSubWindow* sub = mdiArea->activeSubWindow();
+
+	if ( sub == NULL )
+		return;
+	
+	MDIChild* currentChild = qobject_cast<MDIChild*> ( sub->widget() );
+
+	if ( ! newfilter->isSuppressor() )
+	{
+		currentChild->addFilter(filter.first, filter.second);
+	}
+	else
+	{
+		currentChild->addSuppressor(filter.first);
+	}
+}
+
+void
+MainWindow::on_actionFilter_pool_triggered ()
+{
+	qDebug() << "Here I am";
+	FilterModel* model = new FilterModel(); //TODO
+
+	model->setData ( filterPool.keys() );
+
+	QDialog* filter = new FilterConfig(model, DOCUMENT,this);
+
+	filter->show();	
 }
 
 void

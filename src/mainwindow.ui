@@ -37,14 +37,21 @@
     <addaction name="actionSave"/>
     <addaction name="actionClose"/>
     <addaction name="separator"/>
+    <addaction name="actionOpen_Filters"/>
+    <addaction name="actionSave_Filters"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuFilter">
     <property name="title">
      <string>Filter</string>
     </property>
-    <addaction name="actionHighlight"/>
-    <addaction name="actionSuppress"/>
+    <addaction name="actionFilter_configuration"/>
+    <addaction name="actionReset_Highlighter"/>
+    <addaction name="actionReset_filters"/>
+    <addaction name="separator"/>
+    <addaction name="actionNew_filter"/>
+    <addaction name="actionFilter_pool"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
@@ -90,6 +97,41 @@
   <action name="actionQTail">
    <property name="text">
     <string>QTail</string>
+   </property>
+  </action>
+  <action name="actionFilter_configuration">
+   <property name="text">
+    <string>Filter configuration</string>
+   </property>
+  </action>
+  <action name="actionNew_filter">
+   <property name="text">
+    <string>New filter</string>
+   </property>
+  </action>
+  <action name="actionReset_filters">
+   <property name="text">
+    <string>Reset suppressor</string>
+   </property>
+  </action>
+  <action name="actionReset_Highlighter">
+   <property name="text">
+    <string>Reset filter</string>
+   </property>
+  </action>
+  <action name="actionFilter_pool">
+   <property name="text">
+    <string>Filter pool</string>
+   </property>
+  </action>
+  <action name="actionOpen_Filters">
+   <property name="text">
+    <string>Open Filters</string>
+   </property>
+  </action>
+  <action name="actionSave_Filters">
+   <property name="text">
+    <string>Save Filters</string>
    </property>
   </action>
  </widget>

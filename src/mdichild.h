@@ -21,6 +21,7 @@
 
 #include <QTextEdit>
 #include <QList>
+#include <QMap>
 #include "highlighter.h"
 #include "genericfilter.h"
 #include "tail.h"
@@ -31,6 +32,7 @@ class MDIChild: public QTextEdit
 	
  	QString curFile;
 	Tail* worker;
+	QMap<GenericFilter, QTextCharFormat> highlightFilter;
 	QList<GenericFilter> suppressiveFilter;
 	Highlighter* highlighter;
 protected:
@@ -40,8 +42,10 @@ public:
 	MDIChild(const QString& fileName);
 	virtual ~MDIChild();
 	bool addFilter(const GenericFilter& filter, const QTextCharFormat& format);
+	QMap<GenericFilter, QTextCharFormat> getHighlightFilters() const { return highlightFilter; }
 	bool resetFilters();
 	bool addSuppressor( const GenericFilter& filter);
+	QList<GenericFilter> getSuppressorFilters() const { return suppressiveFilter; }
 	bool resetSuppressors();
 	bool isValid() const;
 	QString currentFile() const { return curFile; }

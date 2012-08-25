@@ -34,3 +34,71 @@ GenericFilter::match (const QString & s)
 	}
 	return false;
 }
+
+QString
+GenericFilter::getString () const
+{
+	if ( filterString.count() > 0 )
+		return filterString;
+
+	return filterReg.pattern();
+}
+
+bool
+GenericFilter::operator== (const GenericFilter & other) const
+{
+	if ( suppressor != other.suppressor )
+		return false;
+	
+	if ( filterString.count() == 0 )
+	{
+		if ( filterReg == other.filterReg )
+			return true;
+		return false;
+	}
+	else
+		return filterString == other.filterString;
+}
+
+uint qHash(const GenericFilter& filter)
+{
+	if ( ! filter.filterString.isEmpty() && ! filter.filterString.isNull() )
+		return qHash(filter.name_) ^ qHash ( filter.filterString);
+
+	return qHash(filter.name_) ^ qHash ( filter.filterReg.pattern() );
+}
+
+QDataStream &operator<<(QDataStream & out, const GenericFilter & filter)
+{
+	out << filter.name_;
+	bool regexp = filter.filterString.isEmpty() || filter.filterString.isNull();
+
+	out << regexp;
+	if ( regexp )
+		out << filter.filterReg.pattern();
+	else
+		out << filter.filterString;
+
+	out << filter.suppressor;
+	
+	return out;
+}
+QDataStream &operator>>(QDataStream & in, GenericFilter & filter )
+{
+	in >> filter.name_;
+	bool regexp;
+	in >> regexp;
+
+	if ( regexp )
+	{
+		QString regexpString;
+		in >> regexpString;
+		filter.filterReg = QRegExp ( regexpString );
+	}
+	else
+		in >> filter.filterString;
+
+	in >> filter.suppressor;
+	
+	return in;
+}

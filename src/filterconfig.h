@@ -17,41 +17,31 @@
 */
 
 
-#include "highlighter.h"
+#ifndef FILTERCONFIG_H
+#define FILTERCONFIG_H
 
-Highlighter::Highlighter (QTextDocument* parent ): QSyntaxHighlighter(parent)
+#include <QDialog>
+#include "ui_filtersconfig.h"
+
+enum FilterConfigType { DOCUMENT = 0, GLOBAL = 1 };
+
+class FilterConfig : public QDialog
 {
+	Q_OBJECT
 
-}
+	Ui::FilterConfigDialog ui;
+	FilterConfigType type;
+	QAbstractTableModel* Model;
+protected:
+	void changeEvent(QEvent *e);
+public: 
+	FilterConfig (QAbstractTableModel* mod, FilterConfigType Type = DOCUMENT, QWidget * parent = 0);
+	QAbstractTableModel* model() const { return Model; }
+	virtual ~FilterConfig () { }
 
-Highlighter::~Highlighter ()
-{
+	// TODO return values from dialog
 
-}
+	
+};
 
-void
-Highlighter::highlightBlock (const QString & text)
-{
-	//TODO
-	// We need a logic for strings that match multiple filter
-	foreach (GenericFilter g, filters.keys() )
-	{
-		if ( g.match(text) )
-		{
-			setFormat(0, text.length(), filters.value(g) );
-		}
-	}
-}
-
-void
-Highlighter::addFilter (const GenericFilter & filter,
-			const QTextCharFormat & fmt)
-{
-	filters.insert(filter, fmt);
-}
-
-void
-Highlighter::filterReset ()
-{
-	filters.clear();
-}
+#endif // FILTERCONFIG_H

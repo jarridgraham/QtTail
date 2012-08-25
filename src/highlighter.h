@@ -25,6 +25,7 @@
 #include <QMap>
 #include "genericfilter.h"
 
+// Note: most of its implementation is in highlightBlock - How can we Unit test this?
 class Highlighter: public QSyntaxHighlighter
 {
 	//TODO highligher implementation
@@ -34,6 +35,8 @@ protected:
 	void highlightBlock(const QString &text);
 public:
 	Highlighter (QTextDocument* parent = 0);
+	void filterReset();
+	void addFilter(const GenericFilter& filter, const QTextCharFormat& fmt);
 	virtual ~ Highlighter ();
 };
 
