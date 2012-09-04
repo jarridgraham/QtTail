@@ -22,12 +22,22 @@
 
 #include <QDebug>
 #include <QRegExp>
+#include <QStringList>
 
 NewFilter::NewFilter (QWidget * parent):QDialog (parent), suppressor(false)
 {
 	ui.setupUi(this);
 
 	ui.lineFilter->setValidator( new FilterValidator(MATCH, this)  );
+	
+	
+	QStringList fontSizes;
+	for ( int i = 8; i < 64; i+=4)
+	{
+		fontSizes.append( QString(i));
+	}
+	
+	ui.fontSizeComboBox->insertItems(0, fontSizes);
 	
 	connect(ui.comboBoxFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(changeFilterType(int)));
 	connect(ui.comboBoxMatch, SIGNAL(currentIndexChanged(int)),this, SLOT(changeFilterMatch(int)));

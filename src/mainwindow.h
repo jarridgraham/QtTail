@@ -40,7 +40,7 @@ class MainWindow: public QMainWindow, private Ui::MainWindow
 	void saveFilterPool(QString namefile);
 	MDIChild* createMDIChild(const QString& fileName);
 	QMdiSubWindow* findMDIChild(const QString &fileName);
-
+	QTextCharFormat getDefaultFormat(MDIChild* currentChild) const;
 private slots:
 	void on_actionOpen_triggered();
 	void on_actionSave_triggered();
@@ -51,6 +51,7 @@ private slots:
 	void on_actionQTail_triggered();
 
 	void newFilter();
+	void addFilter2Current(const GenericFilter& filter, bool suppressor);
 protected:
 	void changeEvent(QEvent *e);
 	void closeEvent(QEvent* e){};

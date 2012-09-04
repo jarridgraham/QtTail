@@ -16,12 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
+#include <QDebug>
 #include "genericfilter.h"
 
 bool
 GenericFilter::match (const QString & s)
 {
+	qDebug() << "Match called";
 	if ( ! filterString.isEmpty() )
 	{
 		if ( s.contains(filterString) )
@@ -29,6 +30,8 @@ GenericFilter::match (const QString & s)
 	}
 	if ( ! filterReg.isEmpty() )
 	{
+		//TODO 
+		//Do we match in this way?
 		if ( s.contains(filterReg) )
 			return true;
 	}

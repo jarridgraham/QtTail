@@ -18,12 +18,13 @@
 
 #include <QtAlgorithms>
 #include "filtermodel.h"
+#include <QDebug>
 
 enum Columns { NAME = 0, STRING = 1, PRIO = 2, LAST = PRIO  };
+	
 
 FilterModel::FilterModel ( QObject * parent):QAbstractTableModel (parent)
 {
-	
 }
 
 void
@@ -63,7 +64,7 @@ FilterModel::data (const QModelIndex & index, int role) const
 int
 FilterModel::columnCount (const QModelIndex & parent) const
 {
-	return LAST;
+	return LAST+1;
 }
 
 int
@@ -77,6 +78,8 @@ bool
 FilterModel::setData (const QModelIndex & index, const QVariant & value,
 		      int role)
 {
+	if ( type == DOCUMENT )
+		return false;
 	if ( index.isValid() && role == Qt::EditRole && index.column() == PRIO )
 	{
 		bool ok = false;
@@ -99,7 +102,7 @@ FilterModel::headerData (int section, Qt::Orientation orientation, int role) con
 
 	if ( orientation == Qt::Vertical )
 	{
-	
+		return QVariant();
 		if ( section == NAME )
 			return tr("Name");
 
@@ -111,18 +114,19 @@ FilterModel::headerData (int section, Qt::Orientation orientation, int role) con
 	}
 
 	if ( orientation == Qt::Horizontal )
-	{
-		// TODO -- per ora non serve
+	{		
+		if ( section == NAME )
+			return tr("Name");
+
+		if ( section == STRING )
+			return tr("String");
+
+		if ( section == PRIO )
+			return tr("Priority");
 	}
 
 	return QVariant();
 }
-
-// QMap < int, QVariant >
-// FilterModel::itemData (const QModelIndex & index) const
-// {
-// 	return QAbstractItemModel::itemData (index);
-// }
 
 bool
 FilterModel::insertRows (int row, int count, const QModelIndex & parent)

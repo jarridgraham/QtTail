@@ -23,6 +23,7 @@
 #include <QHash>
 #include <QDataStream>
 #include <QRegExp>
+#include <QVariant>
 
 enum filterType { REGEXP = 1, MATCH = 0 };
 enum filterBehaviour { HIGHLIGHT = 0, SUPPRESS = 1 };
@@ -52,10 +53,17 @@ public:
 	bool operator==(const GenericFilter& other) const;
 	bool match(const QString& s);
 	bool isSuppressor() const { return suppressor; }
+	
+	operator QVariant() const
+	{
+		return QVariant::fromValue(*this);
+	}
 };
 
 uint qHash(const GenericFilter& filter);
 QDataStream &operator<<(QDataStream &, const GenericFilter &);
 QDataStream &operator>>(QDataStream &, GenericFilter &);
+
+Q_DECLARE_METATYPE(GenericFilter);
 
 #endif // GENERICFILTER_H

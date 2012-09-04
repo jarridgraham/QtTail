@@ -30,23 +30,10 @@ Tail::Tail (QString fileName, QObject* parent): QThread(parent), abort(false), i
 	if ( !in.open(QFile::ReadOnly | QFile::Text) )
 	{
 		valid = false;
-		//_error = QString(tr("Cannot open %1 - %2 ")).arg(fileName).arg(QFile.errorString);
 	}
 	qDebug() << "Tail instantiated!" << currentThreadId();
 
 }
-
-// bool Tail::addFile(QString fileName)
-// {
-// 	QFile current = new QFile(fileName, this);
-// 	if ( !current.open(QFile::ReadOnly | QFile::Text) )
-// 	{
-// 		return false;
-// 		//valid = false;
-// 		//_error = QString(tr("Cannot open %1 - %2 ")).arg(fileName).arg(QFile.errorString);
-// 	}
-// }
-
 
 Tail::~Tail ()
 {

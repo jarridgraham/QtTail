@@ -133,9 +133,12 @@ MainWindow::on_actionClose_triggered ()
 void
 MainWindow::on_actionFilter_configuration_triggered ()
 {
-	QAbstractTableModel* model = new FilterModel(); //TODO
+	FilterModel* model = new FilterModel();
 
-	QDialog* filter = new FilterConfig(model, DOCUMENT,this);
+	model->setData( filterPool.keys() );
+	model->setType(DOCUMENT);
+	
+	QDialog* filter = new FilterConfig(model, this);
 
 	filter->show();
 }
@@ -150,6 +153,58 @@ MainWindow::on_actionNew_filter_triggered ()
 	newfilter->show();
 }
 
+
+void MainWindow::addFilter2Current(const GenericFilter& filter, bool suppressor)
+{
+	qDebug() << "addFilter2Current";
+	QList<QMdiSubWindow *> subs = mdiArea->subWindowList(QMdiArea::StackingOrder);
+	
+	if ( subs.count() == 0 )
+	{
+		qDebug() << "No Subs";
+		return;
+	}
+		
+	QMdiSubWindow* sub = subs[0];
+	
+	MDIChild* currentChild = qobject_cast< MDIChild*>( sub->widget() );
+	
+	qDebug() << "going on adding filter";
+	if ( suppressor )
+	{
+		currentChild->addSuppressor(filter);
+	}
+	else
+	{
+		qDebug() << "Current child, adding filter";
+		currentChild->addFilter(filter, getDefaultFormat(currentChild));
+	}
+}
+
+QTextCharFormat MainWindow::getDefaultFormat(MDIChild* currentChild) const
+{
+	QTextCharFormat ret = currentChild->currentCharFormat();
+	
+	QBrush forebrush = ret.foreground();
+	QBrush backbrush = ret.background();
+	QColor foreground(forebrush.color());
+	QColor background(backbrush.color());
+	
+	foreground.setRed( 255 - foreground.red() );
+	foreground.setGreen(255 - foreground.green());
+	foreground.setBlue(255 - foreground.blue());
+	
+	background.setRed( 255 - background.red() );
+	background.setGreen(255 - background.green());
+	background.setBlue(255 - background.blue());
+	
+	ret.setForeground(QBrush(foreground));
+	ret.setBackground(QBrush(background));
+	
+	return ret;
+}
+
+
 void
 MainWindow::newFilter ()
 {
@@ -159,19 +214,27 @@ MainWindow::newFilter ()
 	filterPool.insert ( filter.first, filter.second );
 
 	qDebug() << "Filter pool " << filterPool.count();
-	QMdiSubWindow* sub = mdiArea->activeSubWindow();
-
-	if ( sub == NULL )
+	
+	QList<QMdiSubWindow *> subs = mdiArea->subWindowList(QMdiArea::StackingOrder);
+	
+	if ( subs.count() == 0 ) 
+	{
+		qDebug() << "No Subs";
 		return;
+	}
+		
+	QMdiSubWindow* sub = subs[0];
 	
 	MDIChild* currentChild = qobject_cast<MDIChild*> ( sub->widget() );
 
 	if ( ! newfilter->isSuppressor() )
 	{
+		qDebug() << "2 Current Child adding filter";
 		currentChild->addFilter(filter.first, filter.second);
 	}
 	else
 	{
+		qDebug() << "2 Current adding suppressor";
 		currentChild->addSuppressor(filter.first);
 	}
 }
@@ -179,12 +242,12 @@ MainWindow::newFilter ()
 void
 MainWindow::on_actionFilter_pool_triggered ()
 {
-	qDebug() << "Here I am";
-	FilterModel* model = new FilterModel(); //TODO
+	FilterModel* model = new FilterModel();
 
 	model->setData ( filterPool.keys() );
-
-	QDialog* filter = new FilterConfig(model, DOCUMENT,this);
+	model->setType ( GLOBAL );
+	
+	QDialog* filter = new FilterConfig(model, this);
 
 	filter->show();	
 }

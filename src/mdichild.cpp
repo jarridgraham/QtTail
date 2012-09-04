@@ -30,6 +30,7 @@ MDIChild::closeEvent (QCloseEvent * event)
 MDIChild::MDIChild(const QString& fileName): curFile(fileName)
 {
 	qDebug() << "MDIChild coming";
+	highlightFilter = new QMap<GenericFilter, QTextCharFormat>();
 	worker = new Tail(fileName, this);
 	if ( worker != NULL && worker->isValid() )
 	{
@@ -38,7 +39,7 @@ MDIChild::MDIChild(const QString& fileName): curFile(fileName)
 
 		setWindowTitle(fileName);
 
-		highlighter = new Highlighter(document());
+		highlighter = new Highlighter(this, highlightFilter);
 		if ( highlighter == NULL )
 		{
 			delete worker;
@@ -67,21 +68,26 @@ void MDIChild::receiveLine (QString line)
 	qDebug() << "Line received:" << line ;
 
 	textCursor().insertText(line);
-	//append(line);
+	
+	QTextCursor c = textCursor();
+	c.movePosition(QTextCursor::End);
+	setTextCursor(c);	
 }
 
 bool MDIChild::addFilter(const GenericFilter& filter, const QTextCharFormat& format)
 {
+	qDebug() << "addFilter" << filter.getName();
 	if ( filter.isSuppressor() )
 		return false;
-	if ( highlightFilter.contains( filter ) )
+	if ( highlightFilter->contains( filter ) )
 		return false;
-	highlightFilter.insert(filter, format);
+	highlightFilter->insert(filter, format);
 	return true;
 }
 
 bool MDIChild::addSuppressor(const GenericFilter& filter)
 {
+	qDebug() << filter.getName();
 	if ( ! filter.isSuppressor() )
 		return false;
 	

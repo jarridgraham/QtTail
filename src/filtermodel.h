@@ -24,17 +24,21 @@
 #include <QList>
 #include "genericfilter.h"
 
+enum FilterConfigType { DOCUMENT = 0, GLOBAL = 1 };
+
 class FilterModel:public QAbstractTableModel
 {
 	Q_OBJECT
 
+	FilterConfigType type;
 	QList<GenericFilter> rawData;
 public:
 	explicit FilterModel ( QObject * parent = 0);
 
+	void setType(const FilterConfigType& t) { type  = t; }
+	
 	void setData(const QList<GenericFilter>& filters);
 	void setData(const GenericFilter& filter);
-
 	
 	virtual QVariant data (const QModelIndex & index, int role =
 			 Qt::DisplayRole) const;

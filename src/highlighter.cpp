@@ -16,10 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
+#include <QDebug>
 #include "highlighter.h"
 
-Highlighter::Highlighter (QTextDocument* parent ): QSyntaxHighlighter(parent)
+Highlighter::Highlighter (QTextEdit* parent, QMap<GenericFilter, QTextCharFormat>* filters_ ): QSyntaxHighlighter(parent), filters(filters_)
 {
 
 }
@@ -32,26 +32,28 @@ Highlighter::~Highlighter ()
 void
 Highlighter::highlightBlock (const QString & text)
 {
-	//TODO
+	qDebug() << "highlightBlock count: ";
+	qDebug() << filters->count();
 	// We need a logic for strings that match multiple filter
-	foreach (GenericFilter g, filters.keys() )
+	foreach (GenericFilter g, filters->keys() )
 	{
+		qDebug() << "Text: " << text << " g: " << g.getString(); 
 		if ( g.match(text) )
 		{
-			setFormat(0, text.length(), filters.value(g) );
+			setFormat(0, text.length(), filters->value(g) );
 		}
 	}
 }
 
-void
-Highlighter::addFilter (const GenericFilter & filter,
-			const QTextCharFormat & fmt)
-{
-	filters.insert(filter, fmt);
-}
-
-void
-Highlighter::filterReset ()
-{
-	filters.clear();
-}
+// void
+// Highlighter::addFilter (const GenericFilter & filter,
+// 			const QTextCharFormat & fmt)
+// {
+// 	filters.insert(filter, fmt);
+// }
+// 
+// void
+// Highlighter::filterReset ()
+// {
+// 	filters.clear();
+// }

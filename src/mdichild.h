@@ -32,7 +32,7 @@ class MDIChild: public QTextEdit
 	
  	QString curFile;
 	Tail* worker;
-	QMap<GenericFilter, QTextCharFormat> highlightFilter;
+	QMap<GenericFilter, QTextCharFormat>* highlightFilter;
 	QList<GenericFilter> suppressiveFilter;
 	Highlighter* highlighter;
 protected:
@@ -42,7 +42,7 @@ public:
 	MDIChild(const QString& fileName);
 	virtual ~MDIChild();
 	bool addFilter(const GenericFilter& filter, const QTextCharFormat& format);
-	QMap<GenericFilter, QTextCharFormat> getHighlightFilters() const { return highlightFilter; }
+	QMap<GenericFilter, QTextCharFormat> getHighlightFilters() const { return *highlightFilter; }
 	bool resetFilters();
 	bool addSuppressor( const GenericFilter& filter);
 	QList<GenericFilter> getSuppressorFilters() const { return suppressiveFilter; }

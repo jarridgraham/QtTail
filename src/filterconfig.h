@@ -21,27 +21,30 @@
 #define FILTERCONFIG_H
 
 #include <QDialog>
+#include "genericfilter.h"
 #include "ui_filtersconfig.h"
-
-enum FilterConfigType { DOCUMENT = 0, GLOBAL = 1 };
 
 class FilterConfig : public QDialog
 {
 	Q_OBJECT
 
 	Ui::FilterConfigDialog ui;
-	FilterConfigType type;
 	QAbstractTableModel* Model;
+	
+	mutable int action;
+private slots:
+	void menuAdd(const QModelIndex&);
+	void add2current();
+	void delCurrent();
 protected:
 	void changeEvent(QEvent *e);
 public: 
-	FilterConfig (QAbstractTableModel* mod, FilterConfigType Type = DOCUMENT, QWidget * parent = 0);
+	FilterConfig (QAbstractTableModel* mod, QWidget * parent = 0);
 	QAbstractTableModel* model() const { return Model; }
 	virtual ~FilterConfig () { }
 
-	// TODO return values from dialog
-
-	
+signals:
+	void addFilter(const GenericFilter& filter);
 };
 
 #endif // FILTERCONFIG_H

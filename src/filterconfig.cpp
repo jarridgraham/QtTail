@@ -20,6 +20,8 @@
 #include "filterconfig.h"
 #include "genericfilter.h"
 #include <QEvent>
+#include <QMenu>
+#include <QDebug>
 
 void FilterConfig :: changeEvent(QEvent *e)
 {
@@ -34,8 +36,62 @@ void FilterConfig :: changeEvent(QEvent *e)
 	}
 }
 
-FilterConfig::FilterConfig (QAbstractTableModel * mod, FilterConfigType Type, QWidget * parent):
-	QDialog(parent), type(Type), Model(mod)
+void FilterConfig::add2current()
+{
+	action = 1;
+}
+
+void FilterConfig::delCurrent()
+{
+	action = 2;
+}
+
+
+void FilterConfig::menuAdd(const QModelIndex& index)
+{
+	QAction* add2current = new QAction(tr("Add to current file"), this);
+	add2current->setToolTip(tr("Add this filter to the current tailed file"));
+	connect(add2current, SIGNAL(clicked()), this, SLOT(add2current()));
+	
+	QAction* delthis = new QAction(tr("Delete"), this);
+	delthis->setToolTip(tr("Delete this filter from global pool"));
+	connect(delthis,SIGNAL(clicked()), this, SLOT(delthis()));
+	
+	QMenu contextual(this);
+	contextual.addAction(add2current);
+	contextual.addAction(delthis);
+	
+	QAbstractItemModel* model = ui.tableFilters->model();
+	
+	if ( action == 2 )
+	{
+	
+		QVariant filter = model->data(index);
+		
+		if ( filter.canConvert<GenericFilter>() )
+		{
+// 			GenericFilter realFilter = filter.value();
+			emit addFilter(filter.value<GenericFilter>());
+		}
+	}
+	else if ( action == 1 )
+	{
+		model->removeRow( index.row() );
+	}
+	
+	action = 0;
+}
+
+
+FilterConfig::FilterConfig (QAbstractTableModel * mod, QWidget * parent):
+	QDialog(parent), Model(mod)
 {
 	ui.setupUi(this);
+	ui.tableFilters->setModel(mod);
+	
+	connect(ui.tableFilters, SIGNAL(clicked(const QModelIndex &)), 
+		this, SLOT(menuAdd(const QModelIndex&)));
+
+	ui.tableFilters->horizontalHeader()->setResizeMode(QHeaderView::Stretch);;
 }
+
