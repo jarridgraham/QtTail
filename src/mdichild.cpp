@@ -27,7 +27,7 @@ MDIChild::closeEvent (QCloseEvent * event)
 
 }
 
-MDIChild::MDIChild(const QString& fileName): curFile(fileName)
+MDIChild::MDIChild(const QString& fileName, int default_point_size): curFile(fileName)
 {
 	qDebug() << "MDIChild coming";
 	highlightFilter = new QMap<GenericFilter, QTextCharFormat>();
@@ -43,6 +43,11 @@ MDIChild::MDIChild(const QString& fileName): curFile(fileName)
 		setWindowTitle(fileName);
 		setReadOnly(true);
 		setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
+
+		QFont f = font();
+		f.setPointSize( default_point_size);
+		setFont( f );
+		
 		highlighter = new Highlighter(this, highlightFilter);
 		if ( highlighter == NULL )
 		{
@@ -129,14 +134,15 @@ QTextCharFormat MDIChild::setNewFormat(const Format& format)
 
 
 
-bool MDIChild::addFilter(const GenericFilter& filter, const Format& format)
+bool MDIChild::addFilter(GenericFilter filter, const Format& format)
 {
 	qDebug() << "addFilter" << filter.getName() << " isforegroundset? " << format.isForegroundSet();
 	if ( filter.isSuppressor() )
 		return false;
 	if ( highlightFilter->contains( filter ) )
 		return false;
-	qDebug() << "Is foreground set? " << format.isBackgroundSet();
+
+// 	filter.setPriority( highlightFilter->count() );
 	highlightFilter->insert(filter, setNewFormat(format) );
 	return true;
 }

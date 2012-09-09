@@ -43,9 +43,9 @@ protected:
 	void closeEvent(QCloseEvent *event);
 	
 public:
-	MDIChild(const QString& fileName);
+	MDIChild(const QString& fileName, int defaultpointsize = 8);
 	virtual ~MDIChild();
-	bool addFilter(const GenericFilter& filter, const Format& format);
+	bool addFilter(GenericFilter filter, const Format& format);
 	QMap<GenericFilter, QTextCharFormat> getHighlightFilters() const { return *highlightFilter; }
 	bool addSuppressor( const GenericFilter& filter);
 	QList<GenericFilter> getSuppressorFilters() const { return suppressiveFilter; }

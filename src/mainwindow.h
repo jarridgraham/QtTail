@@ -26,6 +26,7 @@
 #include "newfilter.h"
 #include "format.h"
 #include "ui_mainwindow.h"
+
 class MDIChild;
 
 class MainWindow: public QMainWindow, private Ui::MainWindow

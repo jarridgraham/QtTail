@@ -96,7 +96,7 @@ MainWindow::saveFilterPool (QString namefile)
 MDIChild *MainWindow::createMDIChild(const QString& fileName)
 {
 	qDebug() << "Qui..." + fileName;
-	MDIChild *child = new MDIChild(fileName);
+	MDIChild *child = new MDIChild(fileName, DEFAULT_FONT_WEIGHT);
 
 	//TODO set filters!
 	child->setFontWeight( DEFAULT_FONT_WEIGHT );
@@ -215,7 +215,8 @@ MainWindow::newFilter ()
 {
 	qDebug() << "newFilter handler called!";
 	QPair<GenericFilter, Format*> filter = newfilter->getFilterAndFormat();
-	
+
+	filter.first.setPriority( filterPool.count() );
 	filterPool.insert ( filter.first, filter.second );
 	
 	QList<QMdiSubWindow *> subs = mdiArea->subWindowList(QMdiArea::StackingOrder);

@@ -51,6 +51,7 @@ FilterModel::data (const QModelIndex & index, int role) const
 
 	if ( role == Qt::DisplayRole )
 	{
+		qDebug() << "PRIO: " << rawData.at(index.row()).getPriority();
 		if ( index.column() == NAME )
 			return rawData.at(index.row()).getName();
 		if ( index.column() == STRING )
