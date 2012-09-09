@@ -24,25 +24,42 @@
 #include <QRegExp>
 #include <QStringList>
 
-NewFilter::NewFilter (QWidget * parent):QDialog (parent), suppressor(false)
+NewFilter::NewFilter (QWidget * parent, int defaultFontWeight):QDialog (parent), suppressor(false)
 {
 	ui.setupUi(this);
 
 	ui.lineFilter->setValidator( new FilterValidator(MATCH, this)  );
 	
-	
+	int n = -1;
 	QStringList fontSizes;
 	for ( int i = 8; i < 64; i+=4)
 	{
-		fontSizes.append( QString(i));
+		fontSizes.append( QString::number(i));
+		if ( i <= defaultFontWeight ) ++n;
+			
 	}
 	
 	ui.fontSizeComboBox->insertItems(0, fontSizes);
 	
+	if ( defaultFontWeight > 0 && n >= 0 )
+	{
+		qDebug() << "Default: " << defaultFontWeight << " n: " << n;
+		ui.fontSizeComboBox->setCurrentIndex( n );
+	}
+	
 	connect(ui.comboBoxFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(changeFilterType(int)));
 	connect(ui.comboBoxMatch, SIGNAL(currentIndexChanged(int)),this, SLOT(changeFilterMatch(int)));
 	connect(this, SIGNAL(typeChanged(filterType)),ui.lineFilter->validator(),SLOT(changeState(filterType)));
+// 	connect(this,SIGNAL(accepted()),this,SLOT(returnFormat()));
 }
+
+// void NewFilter::returnFormat()
+// {
+// 	QPair<GenericFilter, Format*> r = getFilterAndFormat();
+// 	
+// 	emit formReturn(r.first, &r.second);
+// }
+
 
 void
 NewFilter::changeFilterType (int type)
@@ -92,18 +109,18 @@ NewFilter::changeEvent (QEvent * e)
 	}
 }
 
-QPair < GenericFilter, QTextCharFormat > NewFilter::getFilterAndFormat () const
+QPair < GenericFilter, Format*> NewFilter::getFilterAndFormat () const
 {
 	GenericFilter filter = getFilter();
 
-	QTextCharFormat format;
+	Format* format;
 	
 	if ( !filter.isSuppressor() )
 	{
 		format = getFormat();
 	}
 
-	return QPair<GenericFilter, QTextCharFormat>(filter, format);
+	return QPair<GenericFilter, Format*>(filter, format);
 }
 
 GenericFilter
@@ -132,57 +149,51 @@ QString NewFilter::getName() const
 	return ui.lineEditName->text();
 }
 
-QTextCharFormat NewFilter::getFormat() const
+Format* NewFilter::getFormat() const
 {
 	if ( suppressor )
-		return QTextCharFormat();
+		return 0;
 
-	QTextCharFormat ret;
-	ret.setFont ( ui.fontComboBox->currentFont() );
+	Format* ret = new Format();
+	ret->setFont ( ui.fontComboBox->currentFont() );
 
 	QString fontSize = ui.fontSizeComboBox->currentText();
 	
-	ret.setFontPointSize( fontSize.toDouble() );
+	ret->setPoints( fontSize.toDouble() );
 
-	QColor forecolor = getForeGroundColor();
-	QBrush foreground(forecolor);
-	ret.setForeground(foreground);
-
-	QColor backcolor = getBackGroundColor();
-	QBrush background(backcolor);
-	ret.setBackground(background);
-
+	ret->setForeground( getForeGroundColor() );
+	ret->setBackground( getBackGroundColor() );
+	ret->setBold( ui.checkBoxBold->isChecked() );
+	ret->setItalic( ui.checkBoxItalic->isChecked() );
+	
 	return ret;
 	
 }
 
-QColor NewFilter::getBackGroundColor() const
+QColor NewFilter::colorParse(QString col) const
 {
-	int r, g, b;
-	QString l = ui.lineEditBackgroundColor->text();
-
-	if ( l.count() < 7 && l[0] != '#' )
+	int r,g,b;
+	
+	if ( col.count() < 7 && col[0] != '#' )
 		return QColor();
 
-	r = ui.lineEditColor->text().mid(1,2).toInt();
-	g = ui.lineEditColor->text().mid(3,2).toInt();
-	g = ui.lineEditColor->text().mid(5,2).toInt();
+	r = col.mid(1,2).toInt(0, 16);
+	g = col.mid(3,2).toInt(0, 16);
+	b = col.mid(5,2).toInt(0, 16);
 
-	return QColor(r, g, b);
+	QColor ret(r,g,b);
+	qDebug() << "color: " << ret << " r: " << r << " g: " << g << " b: " << b;
+	qDebug() << ret.red() << " - " << ret.green() << " - " << ret.blue();
+	return ret;
+}
+
+QColor NewFilter::getBackGroundColor() const
+{
+	return colorParse ( ui.lineEditBackgroundColor->text() );
 }
 
 QColor NewFilter::getForeGroundColor() const
 {
-	int r, g, b;
-	QString l = ui.lineEditColor->text();
-
-	if ( l.count() < 7 && l[0] != '#' )
-		return QColor();
-
-	r = ui.lineEditColor->text().mid(1,2).toInt();
-	g = ui.lineEditColor->text().mid(3,2).toInt();
-	b = ui.lineEditColor->text().mid(5,2).toInt();
-
-	return QColor(r, g, b);
+	return colorParse(ui.lineEditColor->text() );
 }
 

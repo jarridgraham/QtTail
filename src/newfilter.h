@@ -21,11 +21,11 @@
 #define NEWFILTER_H
 
 #include <QDialog>
-#include <QTextCharFormat>
 #include <QPair>
 #include "ui_filters.h"
 #include "genericfilter.h"
 #include "filtervalidator.h"
+#include "format.h"
 
 
 
@@ -39,22 +39,24 @@ class NewFilter:public QDialog
 
 	QColor getBackGroundColor() const;
 	QColor getForeGroundColor() const;
+	QColor colorParse(QString col) const;
 private slots:
 	void changeFilterType(int type);
 	void changeFilterMatch(int type);
-
+// 	void returnFormat();
 protected:
 	void changeEvent(QEvent *e);
 public:
-	NewFilter (QWidget * parent = 0);
-	QPair<GenericFilter, QTextCharFormat> getFilterAndFormat() const;
+	NewFilter (QWidget * parent, int defaultFontWeight);
+	QPair<GenericFilter, Format*> getFilterAndFormat() const;
 	GenericFilter getFilter() const;
-	QTextCharFormat getFormat() const;
+	Format* getFormat() const;
 	QString getName() const;
 	bool isSuppressor() const { return suppressor; }
 	virtual ~NewFilter();
 signals:
 	void typeChanged(filterType f);
+// 	void formReturn(GenericFilter& g, Format** f);
 };
 
 #endif // NEWFILTER_H

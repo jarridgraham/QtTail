@@ -24,7 +24,7 @@
 #include <QHash>
 
 #include "newfilter.h"
-
+#include "format.h"
 #include "ui_mainwindow.h"
 class MDIChild;
 
@@ -34,13 +34,13 @@ class MainWindow: public QMainWindow, private Ui::MainWindow
 
 	NewFilter* newfilter;
 
-	QHash<GenericFilter,QTextCharFormat> filterPool;
+	QHash<GenericFilter,Format*> filterPool;
 
 	void loadFilterPool(QString namefile);
 	void saveFilterPool(QString namefile);
 	MDIChild* createMDIChild(const QString& fileName);
 	QMdiSubWindow* findMDIChild(const QString &fileName);
-	QTextCharFormat getDefaultFormat(MDIChild* currentChild) const;
+	void getDefaultFormat(MDIChild* currentChild, Format& form) const;
 private slots:
 	void on_actionOpen_triggered();
 	void on_actionSave_triggered();
@@ -58,6 +58,7 @@ protected:
 
 public:
 	MainWindow();
+	virtual ~MainWindow();
 };
 
 #endif

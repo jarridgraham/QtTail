@@ -52,19 +52,17 @@ void Tail::stopProcess()
 void
 Tail::goToPosition ()
 {
-	qDebug() << "goToPosition: " << currentThreadId();
 	QStringList lines;
 	QString line;
 	
 	while (  ! in.atEnd() )
 	{
 		line = in.readLine();
-		lines.push_back ( in.readLine() );
+		//qDebug() << "line: " << line.trimmed();
+		lines.push_back ( line );
 
 		if ( lines.count() > 5 )
-		{
 			lines.pop_front();
-		}
 	}
 	foreach(line,lines)
 		emit sendLine(line);

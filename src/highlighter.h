@@ -30,12 +30,11 @@ class Highlighter: public QSyntaxHighlighter
 {
 	QMap<GenericFilter,QTextCharFormat>* filters;
 	
+	
 protected:
 	void highlightBlock(const QString &text);
 public:
 	Highlighter (QTextEdit* parent, QMap<GenericFilter, QTextCharFormat>* filters_);
-// 	void filterReset();
-// 	void addFilter(const GenericFilter& filter, const QTextCharFormat& fmt);
 	virtual ~ Highlighter ();
 };
 

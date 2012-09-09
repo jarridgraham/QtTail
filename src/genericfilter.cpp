@@ -25,8 +25,12 @@ GenericFilter::match (const QString & s)
 	qDebug() << "Match called";
 	if ( ! filterString.isEmpty() )
 	{
+		qDebug() << "filter string";
 		if ( s.contains(filterString) )
+		{
+			qDebug() << "Matched";
 			return true;
+		}
 	}
 	if ( ! filterReg.isEmpty() )
 	{

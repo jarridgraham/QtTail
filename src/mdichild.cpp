@@ -31,6 +31,9 @@ MDIChild::MDIChild(const QString& fileName): curFile(fileName)
 {
 	qDebug() << "MDIChild coming";
 	highlightFilter = new QMap<GenericFilter, QTextCharFormat>();
+	
+	GoToPos();
+	
 	worker = new Tail(fileName, this);
 	if ( worker != NULL && worker->isValid() )
 	{
@@ -38,7 +41,8 @@ MDIChild::MDIChild(const QString& fileName): curFile(fileName)
 		worker->start();
 
 		setWindowTitle(fileName);
-
+		setReadOnly(true);
+		setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
 		highlighter = new Highlighter(this, highlightFilter);
 		if ( highlighter == NULL )
 		{
@@ -61,27 +65,79 @@ MDIChild::isValid () const
 
 MDIChild::~MDIChild ()
 {
+	delete highlightFilter;
 }
+
+void MDIChild::GoToPos(int position)
+{
+	if ( position == -1 )
+	{
+		QTextCursor c = textCursor();
+		c.movePosition(QTextCursor::End);
+		setTextCursor(c);
+	}
+	else
+	{
+		QTextCursor c = textCursor();
+		c.setPosition(position);
+		setTextCursor(c);		
+	}
+}
+
 
 void MDIChild::receiveLine (QString line)
 {
-	qDebug() << "Line received:" << line ;
-
+	QTextCursor position = textCursor();
+	
+	GoToPos();
 	textCursor().insertText(line);
 	
-	QTextCursor c = textCursor();
-	c.movePosition(QTextCursor::End);
-	setTextCursor(c);	
+	setTextCursor( position );
 }
 
-bool MDIChild::addFilter(const GenericFilter& filter, const QTextCharFormat& format)
+QTextCharFormat MDIChild::setNewFormat(const Format& format)
 {
-	qDebug() << "addFilter" << filter.getName();
+	QTextCharFormat newFormat = currentCharFormat();
+	
+	if ( format.isBackgroundSet() )
+	{
+		qDebug() << "Background ok";
+		newFormat.setBackground( format.backgroundBrush() );
+	}
+	if ( format.isForegroundSet() )
+	{
+		qDebug() << "Foreground ok";
+		newFormat.setForeground( format.foregroundBrush() );
+	}
+	if ( format.isBoldSet() && format.bold() )
+		newFormat.setFontWeight( QFont::Bold );
+	else
+		newFormat.setFontWeight( QFont::Normal );
+	
+	if ( format.isItalicSet() )
+		newFormat.setFontItalic ( format.italic() );
+	
+	if ( format.isFontSet() )
+		newFormat.setFont( format.font() );
+	if ( format.isPointsSet() )
+		newFormat.setFontPointSize( format.points() );
+	
+	qDebug() << "Fore: " << newFormat.foreground() << " Back: " << newFormat.background();
+	
+	return newFormat;
+}
+
+
+
+bool MDIChild::addFilter(const GenericFilter& filter, const Format& format)
+{
+	qDebug() << "addFilter" << filter.getName() << " isforegroundset? " << format.isForegroundSet();
 	if ( filter.isSuppressor() )
 		return false;
 	if ( highlightFilter->contains( filter ) )
 		return false;
-	highlightFilter->insert(filter, format);
+	qDebug() << "Is foreground set? " << format.isBackgroundSet();
+	highlightFilter->insert(filter, setNewFormat(format) );
 	return true;
 }
 

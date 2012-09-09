@@ -25,8 +25,11 @@
 #include <QFileDialog>
 #include <QMdiSubWindow>
 #include <QSettings>
+#include <QPointer>
 
 #include <QDebug>
+
+const int DEFAULT_FONT_WEIGHT = 8;
 
 MainWindow::MainWindow ():QMainWindow (0)
 {
@@ -62,12 +65,12 @@ MainWindow::loadFilterPool (QString namefile)
 	QDataStream loader(&file);
 
 	GenericFilter filter;
-	QTextCharFormat format;
+	Format* format = new Format();
 
 	while ( ! loader.atEnd() )
 	{
 		loader >> filter;
-		loader >> format;
+		loader >> *format;
 		filterPool.insert( filter, format );
 	}
 
@@ -81,10 +84,11 @@ MainWindow::saveFilterPool (QString namefile)
 
 	QDataStream writer(&file);
 
-	for (  QHash<GenericFilter, QTextCharFormat>::const_iterator it = filterPool.constBegin(); it != filterPool.constEnd(); ++it )
+	for (  QHash<GenericFilter, Format*>::const_iterator it = filterPool.constBegin(); 
+	     it != filterPool.constEnd(); ++it )
 	{
 		writer << it.key();
-		writer << it.value();
+		writer << *(it.value());
 	}
 }
 
@@ -95,6 +99,7 @@ MDIChild *MainWindow::createMDIChild(const QString& fileName)
 	MDIChild *child = new MDIChild(fileName);
 
 	//TODO set filters!
+	child->setFontWeight( DEFAULT_FONT_WEIGHT );
 	mdiArea->addSubWindow(child);
 	child->show();
 
@@ -146,7 +151,7 @@ MainWindow::on_actionFilter_configuration_triggered ()
 void
 MainWindow::on_actionNew_filter_triggered ()
 {
-	newfilter = new NewFilter(this);
+	newfilter = new NewFilter(this, DEFAULT_FONT_WEIGHT);
 
 	connect(newfilter,SIGNAL(accepted()),this,SLOT(newFilter()));
 
@@ -177,13 +182,15 @@ void MainWindow::addFilter2Current(const GenericFilter& filter, bool suppressor)
 	else
 	{
 		qDebug() << "Current child, adding filter";
-		currentChild->addFilter(filter, getDefaultFormat(currentChild));
+		Format form;
+		getDefaultFormat(currentChild, form);
+		currentChild->addFilter(filter, form);
 	}
 }
 
-QTextCharFormat MainWindow::getDefaultFormat(MDIChild* currentChild) const
+void MainWindow::getDefaultFormat(MDIChild* currentChild, Format& ret) const
 {
-	QTextCharFormat ret = currentChild->currentCharFormat();
+	QTextCharFormat temp = currentChild->currentCharFormat();
 	
 	QBrush forebrush = ret.foreground();
 	QBrush backbrush = ret.background();
@@ -198,10 +205,8 @@ QTextCharFormat MainWindow::getDefaultFormat(MDIChild* currentChild) const
 	background.setGreen(255 - background.green());
 	background.setBlue(255 - background.blue());
 	
-	ret.setForeground(QBrush(foreground));
-	ret.setBackground(QBrush(background));
-	
-	return ret;
+	ret.setForeground(foreground);
+	ret.setBackground(background);
 }
 
 
@@ -209,11 +214,9 @@ void
 MainWindow::newFilter ()
 {
 	qDebug() << "newFilter handler called!";
-	QPair<GenericFilter, QTextCharFormat> filter = newfilter->getFilterAndFormat();
-
+	QPair<GenericFilter, Format*> filter = newfilter->getFilterAndFormat();
+	
 	filterPool.insert ( filter.first, filter.second );
-
-	qDebug() << "Filter pool " << filterPool.count();
 	
 	QList<QMdiSubWindow *> subs = mdiArea->subWindowList(QMdiArea::StackingOrder);
 	
@@ -230,7 +233,7 @@ MainWindow::newFilter ()
 	if ( ! newfilter->isSuppressor() )
 	{
 		qDebug() << "2 Current Child adding filter";
-		currentChild->addFilter(filter.first, filter.second);
+		currentChild->addFilter(filter.first, *(filter.second));
 	}
 	else
 	{
@@ -263,6 +266,15 @@ MainWindow::on_actionQTail_triggered ()
 {
 
 }
+
+MainWindow::~MainWindow()
+{
+	foreach ( Format* f, filterPool)
+	{
+		delete f;
+	}
+}
+
 
 QMdiSubWindow *MainWindow::findMDIChild(const QString &fileName)
 {
