@@ -24,6 +24,7 @@
 #include <QColor>
 #include <QFont>
 #include <QBrush>
+#include <QTextCharFormat>
 #include <QDataStream>
 
 class Format: public QObject
@@ -51,9 +52,12 @@ class Format: public QObject
 	Q_PROPERTY(bool bold READ bold WRITE setBold);
 		
 public:
+	Format(QTextCharFormat tcf, QObject* parent=0);
 	Format(QObject* parent=0): QObject(parent), i_background(false), i_foreground(false), i_points(false), 
 		i_font(false), i_italic(false), i_bold(false), 
 		m_points(-1.0), m_italic(false), m_bold(false) {}
+
+	void copyTo(Format* to); 
 		
 	QColor background() const { return m_background; }
 	QColor foreground() const { return m_foreground; }

@@ -26,6 +26,7 @@
 #include <QMdiSubWindow>
 #include <QSettings>
 #include <QPointer>
+#include <QMessageBox>
 
 #include <QDebug>
 
@@ -41,6 +42,9 @@ MainWindow::MainWindow ():QMainWindow (0)
 
 	if ( ! filename.isEmpty() && ! filename.isNull() )
 		loadFilterPool(filename);
+
+
+// 	connect(mdiArea,SIGNAL(subWindowActivated(QMdiSubWindow*)),this,SLOT(SubWindow(QMdiSubWindow*)));
 }
 
 void MainWindow ::changeEvent(QEvent *e)
@@ -67,11 +71,15 @@ MainWindow::loadFilterPool (QString namefile)
 	GenericFilter filter;
 	Format* format = new Format();
 
+	int prio = filterPool.count();
+
 	while ( ! loader.atEnd() )
 	{
 		loader >> filter;
 		loader >> *format;
-		filterPool.insert( filter, format );
+		filter.setPriority(prio++);
+		filter.setFormat( format );
+		filterPool.append( filter );
 	}
 
 }
@@ -84,11 +92,10 @@ MainWindow::saveFilterPool (QString namefile)
 
 	QDataStream writer(&file);
 
-	for (  QHash<GenericFilter, Format*>::const_iterator it = filterPool.constBegin(); 
-	     it != filterPool.constEnd(); ++it )
+	GenericFilter item;
+	foreach ( item, filterPool )
 	{
-		writer << it.key();
-		writer << *(it.value());
+		writer << item;
 	}
 }
 
@@ -98,12 +105,19 @@ MDIChild *MainWindow::createMDIChild(const QString& fileName)
 	qDebug() << "Qui..." + fileName;
 	MDIChild *child = new MDIChild(fileName, DEFAULT_FONT_WEIGHT);
 
-	//TODO set filters!
-	child->setFontWeight( DEFAULT_FONT_WEIGHT );
-	mdiArea->addSubWindow(child);
-	child->show();
+	if ( child->isValid() )
+	{
 
-	return child;
+		child->setFontWeight( DEFAULT_FONT_WEIGHT );
+		child->setAttribute(Qt::WA_DeleteOnClose);
+		connect(child,SIGNAL(destroyed(QObject*)),this,SLOT(mdiDestroyed(QObject*)));
+		QMdiSubWindow* sub = mdiArea->addSubWindow(child);
+		mdiArea->setActiveSubWindow( sub );
+		child->show();
+
+		return child;
+	}
+	return NULL;
 }
 
 void
@@ -127,26 +141,47 @@ MainWindow::on_actionOpen_triggered ()
 void
 MainWindow::on_actionClose_triggered ()
 {
-	//! @todo TODO Closing to manage!
-	QSettings settings;
-	QString filename = settings.value("filtersfilename", QString()).toString();
+	mdiArea->currentSubWindow()->close();
+}
 
-	saveFilterPool(filename);
+void MainWindow::open_configuration(const QList<GenericFilter>& filters )
+{
+	FilterModel* model = new FilterModel(filters);
+	
+	model->setType(DOCUMENT);
+
+	connect(model, SIGNAL(addFilter(GenericFilter)), this, SLOT(addFilter2Current(GenericFilter)));
+	connect(model, SIGNAL(deleteFilter(GenericFilter)), this, SLOT(deleteFilter(GenericFilter)));
+
+	QDialog* filter = new FilterConfig(model, this);
+
+	filter->show();
+}
+
+void
+MainWindow::addHighlightFilter (const GenericFilter & filter)
+{
+	addFilter2Current(filter);
 }
 
 
 void
 MainWindow::on_actionFilter_configuration_triggered ()
 {
-	FilterModel* model = new FilterModel();
+	MDIChild* child = getTopMDIChild();
 
-	model->setData( filterPool.keys() );
-	model->setType(DOCUMENT);
-	
-	QDialog* filter = new FilterConfig(model, this);
-
-	filter->show();
+	open_configuration( child->getFilters() );
 }
+
+//! @todo this method is not needed (the same as menu item)
+void
+MainWindow::on_actionSuppression_configuration_triggered ()
+{
+	MDIChild* child = getTopMDIChild();
+	
+	open_configuration( child->getFilters() );
+}
+
 
 void
 MainWindow::on_actionNew_filter_triggered ()
@@ -159,33 +194,45 @@ MainWindow::on_actionNew_filter_triggered ()
 }
 
 
-void MainWindow::addFilter2Current(const GenericFilter& filter, bool suppressor)
+void MainWindow::addFilter2Current(GenericFilter filter)
 {
 	qDebug() << "addFilter2Current";
-	QList<QMdiSubWindow *> subs = mdiArea->subWindowList(QMdiArea::StackingOrder);
 	
-	if ( subs.count() == 0 )
-	{
-		qDebug() << "No Subs";
+	MDIChild* currentChild = getTopMDIChild();
+	if ( currentChild == NULL )
 		return;
-	}
-		
-	QMdiSubWindow* sub = subs[0];
-	
-	MDIChild* currentChild = qobject_cast< MDIChild*>( sub->widget() );
 	
 	qDebug() << "going on adding filter";
-	if ( suppressor )
+
+	//! TODO Is getDefaultFormat needed?
+	if ( ! filter.isSuppressor() )
 	{
-		currentChild->addSuppressor(filter);
+		Format* form = new Format();
+		getDefaultFormat(currentChild, *form);
+		filter.setFormat( form );
 	}
-	else
-	{
-		qDebug() << "Current child, adding filter";
-		Format form;
-		getDefaultFormat(currentChild, form);
-		currentChild->addFilter(filter, form);
-	}
+	currentChild->addFilter( filter );
+}
+
+void MainWindow::deleteFilter(GenericFilter filter)
+{
+	qDebug() << "deleteFilter";
+
+	MDIChild* currentChild = getTopMDIChild();
+	if ( currentChild == NULL )
+		return;
+
+	currentChild->removeFilter( filter );
+}
+
+MDIChild* MainWindow::getTopMDIChild ()
+{
+	QMdiSubWindow* active = mdiArea->currentSubWindow();
+	if ( active == NULL )
+		return NULL;
+
+	MDIChild* r = qobject_cast<MDIChild*> ( active->widget() );
+	return r;
 }
 
 void MainWindow::getDefaultFormat(MDIChild* currentChild, Format& ret) const
@@ -209,58 +256,81 @@ void MainWindow::getDefaultFormat(MDIChild* currentChild, Format& ret) const
 	ret.setBackground(background);
 }
 
-
 void
 MainWindow::newFilter ()
 {
 	qDebug() << "newFilter handler called!";
-	QPair<GenericFilter, Format*> filter = newfilter->getFilterAndFormat();
+	
+	GenericFilter filter = newfilter->getFilter();
+	
+	filter.setPriority( filterPool.count() );
+	filterPool.append( filter );
 
-	filter.first.setPriority( filterPool.count() );
-	filterPool.insert ( filter.first, filter.second );
-	
-	QList<QMdiSubWindow *> subs = mdiArea->subWindowList(QMdiArea::StackingOrder);
-	
-	if ( subs.count() == 0 ) 
-	{
-		qDebug() << "No Subs";
+	MDIChild* currentChild  = getTopMDIChild();
+
+	if ( currentChild == NULL )
 		return;
-	}
-		
-	QMdiSubWindow* sub = subs[0];
-	
-	MDIChild* currentChild = qobject_cast<MDIChild*> ( sub->widget() );
 
-	if ( ! newfilter->isSuppressor() )
-	{
-		qDebug() << "2 Current Child adding filter";
-		currentChild->addFilter(filter.first, *(filter.second));
-	}
-	else
-	{
-		qDebug() << "2 Current adding suppressor";
-		currentChild->addSuppressor(filter.first);
-	}
+	currentChild->addFilter( filter );
+	
+// 	if ( ! newfilter->isSuppressor() )
+// 	{
+// 		qDebug() << "2 Current Child adding filter";
+// 		currentChild->addFilter(filter.first, *(filter.second));
+// 	}
+// 	else
+// 	{
+// 		qDebug() << "2 Current adding suppressor";
+// 		currentChild->addSuppressor(filter.first);
+// 	}
 }
 
 void
 MainWindow::on_actionFilter_pool_triggered ()
 {
-	FilterModel* model = new FilterModel();
+	FilterModel* model = new FilterModel(filterPool);
 
-	model->setData ( filterPool.keys() );
+	model->setData ( filterPool );
 	model->setType ( GLOBAL );
 	
 	QDialog* filter = new FilterConfig(model, this);
 
+	connect ( filter, SIGNAL(addFilter(const GenericFilter&)), this, SLOT(addHighlightFilter(const GenericFilter&)));
+	
 	filter->show();	
 }
 
 void
-MainWindow::on_actionSave_triggered ()
+MainWindow::on_actionSave_Filters_triggered ()
 {
+	QString fileName = QFileDialog::getOpenFileName(this);
 
+	QFile checker(fileName);
+	if ( checker.exists() )
+	{
+		int ret = QMessageBox::warning(this, tr("Save"), tr("File exists\n"
+				"Do you want to overwrite it?"), QMessageBox::Yes | QMessageBox::No);
+
+		if ( ret != QMessageBox::Yes )
+		{
+			Ui_MainWindow::statusBar->showMessage(tr("Filters not saved"), 1000);
+			return;
+		}
+	}
+
+	saveFilterPool(fileName);
+	Ui_MainWindow::statusBar->showMessage(tr("Filters saved"), 1000);
 }
+
+void MainWindow::on_actionOpen_Filters_triggered()
+{
+	QString fileName = QFileDialog::getOpenFileName(this);
+
+	loadFilterPool(fileName);
+
+	Ui_MainWindow::statusBar->showMessage(tr("Filters loaded"), 1000);
+}
+
 
 void
 MainWindow::on_actionQTail_triggered ()
@@ -270,10 +340,7 @@ MainWindow::on_actionQTail_triggered ()
 
 MainWindow::~MainWindow()
 {
-	foreach ( Format* f, filterPool)
-	{
-		delete f;
-	}
+
 }
 
 

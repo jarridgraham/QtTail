@@ -24,6 +24,7 @@
 #include <QDataStream>
 #include <QRegExp>
 #include <QVariant>
+#include "format.h"
 
 enum filterType { REGEXP = 1, MATCH = 0 };
 enum filterBehaviour { HIGHLIGHT = 0, SUPPRESS = 1 };
@@ -34,17 +35,22 @@ class GenericFilter
 	QString filterString;
 	QRegExp filterReg;
 	int priority;
-	bool suppressor;
+
+	Format* format;
+	
 	friend uint qHash(const GenericFilter& filter);
 	friend QDataStream &operator<<(QDataStream &, const GenericFilter &);
 	friend QDataStream &operator>>(QDataStream &, GenericFilter &);
 public:
-	GenericFilter(): priority(-1), suppressor(false) {}
-	GenericFilter (const QString& filter, bool suppress = false): filterString(filter),suppressor(suppress) {}
-	GenericFilter (const QRegExp& filter, bool suppress = false): filterReg(filter), suppressor(suppress) {}
+	GenericFilter(): priority(-1), format(NULL) {}
+	GenericFilter (const QString& filter, Format* format_ = NULL): filterString(filter),priority(-1),format(format_) {}
+	GenericFilter (const QRegExp& filter, Format* format_ = NULL): filterReg(filter),priority(-1), format(format_) {}
+	GenericFilter (const GenericFilter& other);
 	void setPriority(int prio) { priority= prio; }
 	int getPriority() const { return priority; }
 	QString getName() const { return name_; }
+	bool isRegExp() const { return filterReg.isValid(); }
+	bool isMatch() const { return ! filterString.isEmpty(); }
 	void setString(QString filter) { filterString = filter; filterReg = QRegExp(); }
 	void setString(QRegExp filter) { filterReg = filter; filterString.clear(); }
 	void setName(QString n) { name_ = n; }
@@ -52,12 +58,16 @@ public:
 	bool operator<(const GenericFilter& other) const { return priority < other.priority; }
 	bool operator==(const GenericFilter& other) const;
 	bool match(const QString& s);
-	bool isSuppressor() const { return suppressor; }
+	bool isSuppressor() const { return format == NULL; }
+
+	void setFormat(Format* format_) { if ( format != NULL ) format.deleteLater(); format = format_; }
+	Format* getFormat() { return format; }
 	
 	operator QVariant() const
 	{
 		return QVariant::fromValue(*this);
 	}
+	~GenericFilter() { if ( format != NULL ) delete format; }
 };
 
 uint qHash(const GenericFilter& filter);

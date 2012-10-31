@@ -21,7 +21,9 @@
 #define FILTERCONFIG_H
 
 #include <QDialog>
+#include <QContextMenuEvent>
 #include "genericfilter.h"
+#include "newfilter.h"
 #include "ui_filtersconfig.h"
 
 class FilterConfig : public QDialog
@@ -30,21 +32,22 @@ class FilterConfig : public QDialog
 
 	Ui::FilterConfigDialog ui;
 	QAbstractTableModel* Model;
-	
-	mutable int action;
+	NewFilter* editWindow;
+
+	QModelIndexList getSelectedItems() const;
+	void deleteMultipleRows( const QModelIndexList& list );
+	void addMultipleRows( const QModelIndexList& list );
+	QModelIndex bookmark;
 private slots:
-	void menuAdd(const QModelIndex&);
-	void add2current();
-	void delCurrent();
+	void updateFilter();
+protected slots:
+	virtual void contextMenuEvent(QContextMenuEvent *event);
 protected:
 	void changeEvent(QEvent *e);
 public: 
 	FilterConfig (QAbstractTableModel* mod, QWidget * parent = 0);
 	QAbstractTableModel* model() const { return Model; }
 	virtual ~FilterConfig () { }
-
-signals:
-	void addFilter(const GenericFilter& filter);
 };
 
 #endif // FILTERCONFIG_H

@@ -18,25 +18,41 @@
 
 #include <QtAlgorithms>
 #include "filtermodel.h"
-#include <QDebug>
 
 enum Columns { NAME = 0, STRING = 1, PRIO = 2, LAST = PRIO  };
 	
 
-FilterModel::FilterModel ( QObject * parent):QAbstractTableModel (parent)
+FilterModel::FilterModel (QList < GenericFilter > filters, QObject * parent):QAbstractTableModel(parent), rawData(filters)
 {
+	qSort(rawData);
 }
+
+
+// QPair < GenericFilter, Format * >FilterModel::completeData (const GenericFilter & key) const
+// {
+// 	QPair<GenericFilter, Format*> p;
+// 	p.first = key;
+// 	
+// 	if ( outer_filters.count() == 0 || ! outer_filters.contains( key ) )
+// 		p.second = NULL;
+// 	else
+// 		p.second = outer_filters.value( key );
+// 
+// 	return p;
+// }
 
 void
 FilterModel::setData (const QList < GenericFilter >& filters)
 {
 	rawData = filters;
+	qSort(rawData);
 }
 
 void
 FilterModel::setData (const GenericFilter & filter)
 {
-	rawData.append( filter );
+	QList<GenericFilter>::iterator cursor = qUpperBound(rawData.begin(), rawData.end(), filter );
+	rawData.insert(cursor, filter);
 }
 
 
@@ -51,7 +67,6 @@ FilterModel::data (const QModelIndex & index, int role) const
 
 	if ( role == Qt::DisplayRole )
 	{
-		qDebug() << "PRIO: " << rawData.at(index.row()).getPriority();
 		if ( index.column() == NAME )
 			return rawData.at(index.row()).getName();
 		if ( index.column() == STRING )
@@ -79,7 +94,7 @@ bool
 FilterModel::setData (const QModelIndex & index, const QVariant & value,
 		      int role)
 {
-	if ( type == DOCUMENT )
+	if ( type == GLOBAL )
 		return false;
 	if ( index.isValid() && role == Qt::EditRole && index.column() == PRIO )
 	{
@@ -158,8 +173,10 @@ FilterModel::removeRows (int row, int count, const QModelIndex & parent)
 	beginRemoveRows(QModelIndex(), row, row+count);
 
 	for ( int irow = 0; irow < count; ++irow )
+	{
+		emit deleteFilter( rawData.at(row) );
 		rawData.removeAt(row);
-	
+	}
 	endRemoveRows();
 	return true;
 }
@@ -176,13 +193,18 @@ Qt::ItemFlags FilterModel::flags (const QModelIndex & index) const
          return Qt::ItemIsEnabled;
 
      if ( index.column() != PRIO )
-	     return Qt::ItemIsSelectable;
+	     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 
-     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+     return Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
 void FilterModel::sort(int column, Qt::SortOrder order)
 {
 	qStableSort(rawData);
+}
+
+FilterModel::~FilterModel()
+{
+
 }
 

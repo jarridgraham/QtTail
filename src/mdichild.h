@@ -33,22 +33,26 @@ class MDIChild: public QTextEdit
 	
  	QString curFile;
 	Tail* worker;
-	QMap<GenericFilter, QTextCharFormat>* highlightFilter;
-	QList<GenericFilter> suppressiveFilter;
+	QMap<GenericFilter, QTextCharFormat> filters;
+// 	QMap<GenericFilter, QTextCharFormat>* highlightFilter;
+// 	QList<GenericFilter> suppressiveFilter;
 	Highlighter* highlighter;
 	
 	void GoToPos(int position = -1);
 	QTextCharFormat setNewFormat(const Format& format);
+	bool doAddFilter(GenericFilter filter);
 protected:
 	void closeEvent(QCloseEvent *event);
 	
 public:
 	MDIChild(const QString& fileName, int defaultpointsize = 8);
 	virtual ~MDIChild();
-	bool addFilter(GenericFilter filter, const Format& format);
-	QMap<GenericFilter, QTextCharFormat> getHighlightFilters() const { return *highlightFilter; }
-	bool addSuppressor( const GenericFilter& filter);
-	QList<GenericFilter> getSuppressorFilters() const { return suppressiveFilter; }
+	bool addFilter(GenericFilter filter);
+	void removeFilter(GenericFilter filter);
+	void updateAllFilters(QList<GenericFilter> newfilters);
+
+	QList<GenericFilter> getFilters() const { return filters.keys(); }
+
 	bool isValid() const;
 	QString currentFile() const { return curFile; }
 

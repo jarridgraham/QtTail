@@ -38,25 +38,27 @@ class NewFilter:public QDialog
 	bool suppressor;
 
 	QColor getBackGroundColor() const;
+	QString getColorString( const QColor& color ) const;
 	QColor getForeGroundColor() const;
 	QColor colorParse(QString col) const;
+	void setConnections();
+	void setFormat(const Format* format);
+	void setFilter(const GenericFilter& filter);
+	Format* getFormat() const;	
 private slots:
 	void changeFilterType(int type);
 	void changeFilterMatch(int type);
-// 	void returnFormat();
 protected:
 	void changeEvent(QEvent *e);
 public:
 	NewFilter (QWidget * parent, int defaultFontWeight);
-	QPair<GenericFilter, Format*> getFilterAndFormat() const;
+	NewFilter (QWidget * parent, GenericFilter filter_);
 	GenericFilter getFilter() const;
-	Format* getFormat() const;
 	QString getName() const;
 	bool isSuppressor() const { return suppressor; }
 	virtual ~NewFilter();
 signals:
 	void typeChanged(filterType f);
-// 	void formReturn(GenericFilter& g, Format** f);
 };
 
 #endif // NEWFILTER_H

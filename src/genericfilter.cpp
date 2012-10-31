@@ -18,6 +18,7 @@
 
 #include <QDebug>
 #include "genericfilter.h"
+#include "format.h"
 
 bool
 GenericFilter::match (const QString & s)
@@ -34,10 +35,12 @@ GenericFilter::match (const QString & s)
 	}
 	if ( ! filterReg.isEmpty() )
 	{
-		//TODO 
-		//Do we match in this way?
-		if ( s.contains(filterReg) )
+		qDebug() << "regexp string";
+		if ( filterReg.indexIn( s ) != -1 )
+		{
+			qDebug() << "regexp matched";
 			return true;
+		}
 	}
 	return false;
 }
@@ -54,15 +57,8 @@ GenericFilter::getString () const
 bool
 GenericFilter::operator== (const GenericFilter & other) const
 {
-	if ( suppressor != other.suppressor )
-		return false;
-	
 	if ( filterString.count() == 0 )
-	{
-		if ( filterReg == other.filterReg )
-			return true;
-		return false;
-	}
+		return filterReg == other.filterReg;
 	else
 		return filterString == other.filterString;
 }
@@ -86,8 +82,14 @@ QDataStream &operator<<(QDataStream & out, const GenericFilter & filter)
 	else
 		out << filter.filterString;
 
-	out << filter.suppressor;
-	
+	if ( filter.format == NULL )
+		out << 0;
+	else
+	{
+		out << 1;
+		out << *(filter.format);
+	}
+		
 	return out;
 }
 QDataStream &operator>>(QDataStream & in, GenericFilter & filter )
@@ -105,7 +107,31 @@ QDataStream &operator>>(QDataStream & in, GenericFilter & filter )
 	else
 		in >> filter.filterString;
 
-	in >> filter.suppressor;
+	int switch_var;
+	in >> switch_var;
+
+	if ( switch_var != 0 )
+	{
+		Format* new_format = new Format();
+		in >> (*new_format);
+		filter.format = new_format;
+	}
 	
 	return in;
 }
+
+GenericFilter::GenericFilter(const GenericFilter& other)
+{
+	filterReg = other.filterReg;
+	filterString = other.filterString;
+	priority = other.priority;
+	name_ = other.name_;
+	if ( other.format != NULL )
+	{
+		format = new Format();
+		other.format->copyTo ( format );
+	}
+	else
+		format = NULL;
+}
+

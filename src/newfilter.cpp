@@ -47,19 +47,27 @@ NewFilter::NewFilter (QWidget * parent, int defaultFontWeight):QDialog (parent),
 		ui.fontSizeComboBox->setCurrentIndex( n );
 	}
 	
+	setConnections();
+}
+
+NewFilter::NewFilter (QWidget * parent, GenericFilter filter_):
+	QDialog(parent)
+{
+	setConnections();
+	setFilter(filter_);
+
+	if ( ! filter_.isSuppressor() )
+		setFormat ( filter_.getFormat() );
+}
+
+void
+NewFilter::setConnections ()
+{
 	connect(ui.comboBoxFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(changeFilterType(int)));
 	connect(ui.comboBoxMatch, SIGNAL(currentIndexChanged(int)),this, SLOT(changeFilterMatch(int)));
 	connect(this, SIGNAL(typeChanged(filterType)),ui.lineFilter->validator(),SLOT(changeState(filterType)));
 // 	connect(this,SIGNAL(accepted()),this,SLOT(returnFormat()));
 }
-
-// void NewFilter::returnFormat()
-// {
-// 	QPair<GenericFilter, Format*> r = getFilterAndFormat();
-// 	
-// 	emit formReturn(r.first, &r.second);
-// }
-
 
 void
 NewFilter::changeFilterType (int type)
@@ -71,7 +79,6 @@ NewFilter::changeFilterType (int type)
 		suppressor = true;
 
 	ui.groupBoxHighlight->setEnabled ( ! suppressor );
-
 }
 
 void
@@ -109,19 +116,19 @@ NewFilter::changeEvent (QEvent * e)
 	}
 }
 
-QPair < GenericFilter, Format*> NewFilter::getFilterAndFormat () const
-{
-	GenericFilter filter = getFilter();
-
-	Format* format;
-	
-	if ( !filter.isSuppressor() )
-	{
-		format = getFormat();
-	}
-
-	return QPair<GenericFilter, Format*>(filter, format);
-}
+// QPair < GenericFilter, Format*> NewFilter::getFilterAndFormat () const
+// {
+// 	GenericFilter filter = getFilter();
+// 
+// 	Format* format;
+// 	
+// 	if ( !filter.isSuppressor() )
+// 	{
+// 		format = getFormat();
+// 	}
+// 
+// 	return QPair<GenericFilter, Format*>(filter, format);
+// }
 
 GenericFilter
 NewFilter::getFilter () const
@@ -130,6 +137,8 @@ NewFilter::getFilter () const
 	{
 		GenericFilter ret(ui.lineFilter->text());
 		ret.setName( ui.lineEditName->text());
+		if ( ! suppressor )
+			ret.setFormat( getFormat() );
 		return ret;
 	}
 
@@ -138,6 +147,8 @@ NewFilter::getFilter () const
 		QRegExp expr(ui.lineFilter->text());
 		GenericFilter ret(expr);
 		ret.setName( ui.lineEditName->text());
+		if ( ! suppressor )
+			ret.setFormat( getFormat() );		
 		return ret;
 	}
 
@@ -148,6 +159,55 @@ QString NewFilter::getName() const
 {
 	return ui.lineEditName->text();
 }
+
+QString NewFilter::getColorString(const QColor& color) const
+{
+	QString retVal("#%1%2%3");
+	retVal.arg(color.red(),2,10).arg(color.green(),2,10).arg(color.blue(),2,10);
+
+	qDebug() << "retVal: " << retVal;
+	return retVal;
+}
+
+void NewFilter::setFilter(const GenericFilter& filter )
+{
+	ui.lineEditName->setText(filter.getName());
+	ui.lineFilter->setText( filter.getString() );
+
+	if ( filter.isSuppressor() )
+	{
+		suppressor = true;
+		ui.comboBoxFilter->setCurrentIndex( 1 );
+	}
+	else
+	{
+		ui.comboBoxFilter->setCurrentIndex( 0 );
+		suppressor = false;
+	}
+	if ( filter.isMatch() )
+		ui.comboBoxMatch->setCurrentIndex( 0 );
+	if ( filter.isRegExp() )
+		ui.comboBoxMatch->setCurrentIndex( 1 );
+}
+
+
+
+void NewFilter::setFormat(const Format* format)
+{
+	if ( format->isFontSet() )
+		ui.fontComboBox->setCurrentFont( format->font() );
+	if ( format->isBoldSet() )
+		ui.checkBoxBold->setChecked( format->bold() );
+	if ( format->isItalicSet() )
+		ui.checkBoxItalic->setChecked( format->italic() );
+	
+	if ( format->isBackgroundSet() )
+		ui.lineEditBackgroundColor->setText( getColorString( format->background() ) );
+
+	if ( format->isForegroundSet() )
+		ui.lineEditColor->setText ( getColorString( format->foreground() ) );
+}
+
 
 Format* NewFilter::getFormat() const
 {

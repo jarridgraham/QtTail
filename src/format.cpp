@@ -19,6 +19,15 @@
 
 #include "format.h"
 
+Format::Format (QTextCharFormat tcf, QObject* parent):QObject (parent)
+{
+	setBackground( tcf.background().color() );
+	setForeground( tcf.foreground().color() );
+	setBold( tcf.fontWeight() == QFont::Bold );
+	setItalic( tcf.fontItalic() );
+	setPoints ( tcf.fontPointSize() );
+}
+
 
 QDataStream &operator<<(QDataStream &in, const Format &out)
 {
@@ -55,6 +64,24 @@ QDataStream &operator<<(QDataStream &in, const Format &out)
 	
 	return in;
 }
+
+void
+Format::copyTo (Format * to)
+{
+	if ( isBackgroundSet() )
+		to->setBackground( background() );
+	if ( isForegroundSet() )
+		to->setForeground( foreground() );
+	if ( isFontSet() )
+		to->setFont( font() );
+	if ( isItalicSet() )
+		to->setItalic( italic() );
+	if ( isPointsSet() )
+		to->setPoints( points() );
+	if ( isBoldSet() )
+		to->setBold ( bold() );
+}
+
 
 //NOTE order of strings is very important: it needs to be synced between the two operators!
 QDataStream &operator>>(QDataStream & out, Format &in)

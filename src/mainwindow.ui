@@ -48,6 +48,7 @@
     </property>
     <addaction name="actionFilter_configuration"/>
     <addaction name="actionReset_Highlighter"/>
+    <addaction name="actionSuppressor_configuration"/>
     <addaction name="actionReset_filters"/>
     <addaction name="separator"/>
     <addaction name="actionNew_filter"/>
@@ -59,8 +60,16 @@
     </property>
     <addaction name="actionQTail"/>
    </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>Window</string>
+    </property>
+    <addaction name="actionCascade"/>
+    <addaction name="actionTile"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuFilter"/>
+   <addaction name="menuWindow"/>
    <addaction name="menuAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -134,22 +143,53 @@
     <string>Save Filters</string>
    </property>
   </action>
+  <action name="actionSuppressor_configuration">
+   <property name="text">
+    <string>Suppressor configuration</string>
+   </property>
+  </action>
+  <action name="actionCascade">
+   <property name="text">
+    <string>Cascade</string>
+   </property>
+  </action>
+  <action name="actionTile">
+   <property name="text">
+    <string>Tile</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
   <connection>
-   <sender>actionQuit</sender>
-   <signal>activated()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>close()</slot>
+   <sender>actionTile</sender>
+   <signal>triggered()</signal>
+   <receiver>mdiArea</receiver>
+   <slot>tileSubWindows()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>167</x>
-     <y>113</y>
+     <x>539</x>
+     <y>285</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCascade</sender>
+   <signal>triggered()</signal>
+   <receiver>mdiArea</receiver>
+   <slot>cascadeSubWindows()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>539</x>
+     <y>285</y>
     </hint>
    </hints>
   </connection>

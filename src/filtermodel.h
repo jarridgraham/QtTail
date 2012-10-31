@@ -21,7 +21,10 @@
 #define FILTERMODEL_H
 
 #include <QAbstractTableModel>
+#include <QMap>
 #include <QList>
+#include <QTextCharFormat>
+#include "format.h"
 #include "genericfilter.h"
 
 enum FilterConfigType { DOCUMENT = 0, GLOBAL = 1 };
@@ -32,8 +35,9 @@ class FilterModel:public QAbstractTableModel
 
 	FilterConfigType type;
 	QList<GenericFilter> rawData;
+// 	QMap<GenericFilter, Format*> outer_filters;
 public:
-	explicit FilterModel ( QObject * parent = 0);
+	FilterModel ( QList<GenericFilter> filters, QObject* parent = 0);
 
 	void setType(const FilterConfigType& t) { type  = t; }
 	
@@ -48,7 +52,6 @@ public:
 			int role = Qt::EditRole);
 	virtual QVariant headerData (int section, Qt::Orientation orientation,
 			       int role = Qt::DisplayRole) const;
-// 	virtual QMap < int, QVariant > itemData (const QModelIndex & index) const;
 	virtual bool insertRows (int row, int count, const QModelIndex & parent =
 			   QModelIndex ());
 	virtual bool insertColumns (int column, int count,
@@ -59,7 +62,11 @@ public:
 			      const QModelIndex & parent = QModelIndex ());
 	virtual Qt::ItemFlags flags (const QModelIndex & index) const;
 	virtual void sort ( int column, Qt::SortOrder order = Qt::AscendingOrder );
-	virtual ~ FilterModel () {}
+	virtual ~ FilterModel ();
+
+signals:
+	void deleteFilter(GenericFilter);
+	void addFilter(GenericFilter);
 };
 
 #endif // FILTERMODEL_H

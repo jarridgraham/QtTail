@@ -19,8 +19,10 @@
 
 #include "filterconfig.h"
 #include "genericfilter.h"
+#include "newfilter.h"
 #include <QEvent>
 #include <QMenu>
+#include <QItemSelectionModel>
 #include <QDebug>
 
 void FilterConfig :: changeEvent(QEvent *e)
@@ -36,62 +38,92 @@ void FilterConfig :: changeEvent(QEvent *e)
 	}
 }
 
-void FilterConfig::add2current()
-{
-	action = 1;
-}
-
-void FilterConfig::delCurrent()
-{
-	action = 2;
-}
-
-
-void FilterConfig::menuAdd(const QModelIndex& index)
+//! @note If single line we can edit!
+void
+FilterConfig::contextMenuEvent (QContextMenuEvent *event)
 {
 	QAction* add2current = new QAction(tr("Add to current file"), this);
-	add2current->setToolTip(tr("Add this filter to the current tailed file"));
-	connect(add2current, SIGNAL(clicked()), this, SLOT(add2current()));
-	
+	add2current->setToolTip(tr("Add selected filter to the current tailed file"));
+
 	QAction* delthis = new QAction(tr("Delete"), this);
-	delthis->setToolTip(tr("Delete this filter from global pool"));
-	connect(delthis,SIGNAL(clicked()), this, SLOT(delthis()));
-	
+	delthis->setToolTip(tr("Delete selected filter from global pool"));
+
+	QModelIndexList selection = getSelectedItems();
+
+	QAction* edit = NULL;
+	if ( selection.count() == 1 )
+	{
+		edit = new QAction(tr("Edit filter"), this);
+		edit->setToolTip(tr("Edit selected filter"));
+	}
+
 	QMenu contextual(this);
 	contextual.addAction(add2current);
 	contextual.addAction(delthis);
+	if ( edit != NULL ) contextual.addAction(edit);
+
+	QAction* selected = contextual.exec( event->globalPos() );
 	
-	QAbstractItemModel* model = ui.tableFilters->model();
-	
-	if ( action == 2 )
+	if ( selected == delthis )
 	{
-	
-		QVariant filter = model->data(index);
-		
-		if ( filter.canConvert<GenericFilter>() )
-		{
-// 			GenericFilter realFilter = filter.value();
-			emit addFilter(filter.value<GenericFilter>());
-		}
+		deleteMultipleRows( selection );
 	}
-	else if ( action == 1 )
+	else if ( selected == add2current )
 	{
-		model->removeRow( index.row() );
+		addMultipleRows ( selection );
 	}
-	
-	action = 0;
+	else if ( selected == edit )
+	{
+		bookmark = selection.front();
+		GenericFilter filter = Model->data( bookmark ).value<GenericFilter>();
+		editWindow = new NewFilter(this, filter);
+		connect(editWindow,SIGNAL(accepted()),this,SLOT(updateFilter()));
+		editWindow->show();
+	}
 }
 
+void FilterConfig::updateFilter()
+{
+	GenericFilter filter = editWindow->getFilter();
 
-FilterConfig::FilterConfig (QAbstractTableModel * mod, QWidget * parent):
-	QDialog(parent), Model(mod)
+	Model->setData ( bookmark, filter );
+}
+
+void
+FilterConfig::deleteMultipleRows ( const QModelIndexList& list )
+{
+	foreach ( QModelIndex item, list )
+	{
+		Model->removeRow( item.row() );
+	}
+}
+
+void
+FilterConfig::addMultipleRows ( const QModelIndexList& list )
+{
+	foreach ( QModelIndex item, list )
+	{
+		GenericFilter filter;
+	}
+}
+
+QModelIndexList FilterConfig::getSelectedItems() const
+{
+	QItemSelectionModel* SelectionModel = ui.tableFilters->selectionModel();
+
+	QModelIndexList selected = SelectionModel->selectedRows();
+}
+
+FilterConfig::FilterConfig(QAbstractTableModel* mod, QWidget* parent): QDialog(parent ),Model(mod)
 {
 	ui.setupUi(this);
+	ui.tableFilters->setSelectionBehavior(QAbstractItemView::SelectRows);
 	ui.tableFilters->setModel(mod);
-	
-	connect(ui.tableFilters, SIGNAL(clicked(const QModelIndex &)), 
-		this, SLOT(menuAdd(const QModelIndex&)));
 
-	ui.tableFilters->horizontalHeader()->setResizeMode(QHeaderView::Stretch);;
+	const QItemSelectionModel* SelectionModel = ui.tableFilters->selectionModel();
+
+	QObject::connect (ui.tableFilters,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(contextMenuEvent(const QPoint &)));
+
+	ui.tableFilters->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
 }
 

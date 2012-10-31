@@ -34,25 +34,33 @@ class MainWindow: public QMainWindow, private Ui::MainWindow
 	Q_OBJECT
 
 	NewFilter* newfilter;
-
-	QHash<GenericFilter,Format*> filterPool;
+	//QMap<GenericFilter,Format*> filterPool;
+	QList<GenericFilter> filterPool;
 
 	void loadFilterPool(QString namefile);
 	void saveFilterPool(QString namefile);
 	MDIChild* createMDIChild(const QString& fileName);
 	QMdiSubWindow* findMDIChild(const QString &fileName);
+	MDIChild* getTopMDIChild();
 	void getDefaultFormat(MDIChild* currentChild, Format& form) const;
+	void open_configuration(const QList<GenericFilter>& filters );
+	void deleteFilter(GenericFilter filter);	
+// 	void open_configuration(const QMap<GenericFilter, Format*>& filters );
 private slots:
+	void on_actionOpen_Filters_triggered();
 	void on_actionOpen_triggered();
-	void on_actionSave_triggered();
+	void on_actionSave_Filters_triggered();
 	void on_actionClose_triggered();
 	void on_actionFilter_configuration_triggered();
+	void on_actionSuppression_configuration_triggered();
 	void on_actionNew_filter_triggered();
 	void on_actionFilter_pool_triggered();
 	void on_actionQTail_triggered();
 
 	void newFilter();
-	void addFilter2Current(const GenericFilter& filter, bool suppressor);
+	void addFilter2Current(GenericFilter filter);
+	void addHighlightFilter(const GenericFilter& filter);
+
 protected:
 	void changeEvent(QEvent *e);
 	void closeEvent(QEvent* e){};

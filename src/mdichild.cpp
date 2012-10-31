@@ -24,13 +24,12 @@
 void
 MDIChild::closeEvent (QCloseEvent * event)
 {
-
+	qDebug() << "closeEvent";
 }
 
 MDIChild::MDIChild(const QString& fileName, int default_point_size): curFile(fileName)
 {
 	qDebug() << "MDIChild coming";
-	highlightFilter = new QMap<GenericFilter, QTextCharFormat>();
 	
 	GoToPos();
 	
@@ -48,7 +47,7 @@ MDIChild::MDIChild(const QString& fileName, int default_point_size): curFile(fil
 		f.setPointSize( default_point_size);
 		setFont( f );
 		
-		highlighter = new Highlighter(this, highlightFilter);
+		highlighter = new Highlighter(this, &filters);
 		if ( highlighter == NULL )
 		{
 			delete worker;
@@ -70,7 +69,7 @@ MDIChild::isValid () const
 
 MDIChild::~MDIChild ()
 {
-	delete highlightFilter;
+	qDebug() << "~MDIChild";
 }
 
 void MDIChild::GoToPos(int position)
@@ -132,30 +131,75 @@ QTextCharFormat MDIChild::setNewFormat(const Format& format)
 	return newFormat;
 }
 
+// QMap< GenericFilter, Format* > MDIChild::getHighlightsFormats() const
+// {
+// 	QMap< GenericFilter, Format* > ret;
+// 
+// 	if ( highlightFilter == NULL )
+// 		return ret;
+// 
+// 	QMapIterator<GenericFilter, QTextCharFormat> i(*highlightFilter);
+// 	while (i.hasNext())
+// 	{
+// 		i.next();
+// 		Format* f = new Format ( i.value() );
+// 		ret.insert(i.key(), f);
+// 	}
+// }
 
 
-bool MDIChild::addFilter(GenericFilter filter, const Format& format)
+
+bool MDIChild::addFilter(GenericFilter filter)
 {
-	qDebug() << "addFilter" << filter.getName() << " isforegroundset? " << format.isForegroundSet();
-	if ( filter.isSuppressor() )
-		return false;
-	if ( highlightFilter->contains( filter ) )
+	if ( filters.contains( filter ) )
 		return false;
 
-// 	filter.setPriority( highlightFilter->count() );
-	highlightFilter->insert(filter, setNewFormat(format) );
+ 	filter.setPriority( filters.count() );	
+
+	doAddFilter( filter );
+
+	highlighter->rehighlight();
 	return true;
 }
 
-bool MDIChild::addSuppressor(const GenericFilter& filter)
+void MDIChild::removeFilter(GenericFilter remfilter)
 {
-	qDebug() << filter.getName();
+	filters.remove(remfilter);
+}
+
+bool MDIChild::doAddFilter( GenericFilter filter)
+{
+	QTextCharFormat concreteFormat;
 	if ( ! filter.isSuppressor() )
-		return false;
-	
-	if ( suppressiveFilter.contains( filter ) )
-		return false;
-	suppressiveFilter.append(filter);
+	{
+		concreteFormat = setNewFormat ( *(filter.getFormat()) );
+	}
+
+	filters.insert(filter, concreteFormat );
 	return true;
 }
+
+
+void MDIChild::updateAllFilters(QList<GenericFilter> newfilters)
+{
+	filters.clear();
+
+	foreach ( GenericFilter it, newfilters )
+	{
+		doAddFilter( it );
+	}
+}
+
+
+// bool MDIChild::addSuppressor(const GenericFilter& filter)
+// {
+// 	qDebug() << filter.getName();
+// 	if ( ! filter.isSuppressor() )
+// 		return false;
+// 	
+// 	if ( suppressiveFilter.contains( filter ) )
+// 		return false;
+// 	suppressiveFilter.append(filter);
+// 	return true;
+// }
 
