@@ -60,7 +60,7 @@ public:
 	bool match(const QString& s);
 	bool isSuppressor() const { return format == NULL; }
 
-	void setFormat(Format* format_) { if ( format != NULL ) format.deleteLater(); format = format_; }
+	void setFormat(Format* format_) { if ( format != NULL ) format->deleteLater(); format = format_; }
 	Format* getFormat() { return format; }
 	
 	operator QVariant() const
