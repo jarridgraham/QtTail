@@ -112,6 +112,8 @@ QModelIndexList FilterConfig::getSelectedItems() const
 	QItemSelectionModel* SelectionModel = ui.tableFilters->selectionModel();
 
 	QModelIndexList selected = SelectionModel->selectedRows();
+	
+	return selected;
 }
 
 FilterConfig::FilterConfig(QAbstractTableModel* mod, QWidget* parent): QDialog(parent ),Model(mod)

@@ -53,9 +53,9 @@ class Format: public QObject
 		
 public:
 	Format(QTextCharFormat tcf, QObject* parent=0);
-	Format(QObject* parent=0): QObject(parent), i_background(false), i_foreground(false), i_points(false), 
-		i_font(false), i_italic(false), i_bold(false), 
-		m_points(-1.0), m_italic(false), m_bold(false) {}
+	Format(QObject* parent=0): QObject(parent), i_background(false), i_foreground(false), m_points(-1.0), i_points(false), 
+		i_font(false), m_italic(false), i_italic(false), 
+		m_bold(false), i_bold(false){}
 
 	void copyTo(Format* to); 
 		

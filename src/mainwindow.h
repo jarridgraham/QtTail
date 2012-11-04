@@ -34,8 +34,8 @@ class MainWindow: public QMainWindow, private Ui::MainWindow
 	Q_OBJECT
 
 	NewFilter* newfilter;
-	//QMap<GenericFilter,Format*> filterPool;
 	QList<GenericFilter> filterPool;
+	bool modified;
 
 	void loadFilterPool(QString namefile);
 	void saveFilterPool(QString namefile);
@@ -44,8 +44,8 @@ class MainWindow: public QMainWindow, private Ui::MainWindow
 	MDIChild* getTopMDIChild();
 	void getDefaultFormat(MDIChild* currentChild, Format& form) const;
 	void open_configuration(const QList<GenericFilter>& filters );
-	void deleteFilter(GenericFilter filter);	
-// 	void open_configuration(const QMap<GenericFilter, Format*>& filters );
+	void deleteFilter(GenericFilter filter);
+	QString getFilename();
 private slots:
 	void on_actionOpen_Filters_triggered();
 	void on_actionOpen_triggered();
@@ -56,6 +56,7 @@ private slots:
 	void on_actionNew_filter_triggered();
 	void on_actionFilter_pool_triggered();
 	void on_actionQTail_triggered();
+	void on_actionQuit_triggered();
 
 	void newFilter();
 	void addFilter2Current(GenericFilter filter);
@@ -63,7 +64,7 @@ private slots:
 
 protected:
 	void changeEvent(QEvent *e);
-	void closeEvent(QEvent* e){};
+	void closeEvent(QCloseEvent* e);
 
 public:
 	MainWindow();

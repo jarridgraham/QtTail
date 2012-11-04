@@ -32,7 +32,7 @@
 
 const int DEFAULT_FONT_WEIGHT = 8;
 
-MainWindow::MainWindow ():QMainWindow (0)
+MainWindow::MainWindow ():QMainWindow (0), modified(false)
 {
 	setupUi(this);
 	Ui_MainWindow::statusBar->showMessage(tr("Going"), 1000);
@@ -42,9 +42,6 @@ MainWindow::MainWindow ():QMainWindow (0)
 
 	if ( ! filename.isEmpty() && ! filename.isNull() )
 		loadFilterPool(filename);
-
-
-// 	connect(mdiArea,SIGNAL(subWindowActivated(QMdiSubWindow*)),this,SLOT(SubWindow(QMdiSubWindow*)));
 }
 
 void MainWindow ::changeEvent(QEvent *e)
@@ -81,7 +78,7 @@ MainWindow::loadFilterPool (QString namefile)
 		filter.setFormat( format );
 		filterPool.append( filter );
 	}
-
+	modified = false;
 }
 
 void
@@ -97,6 +94,7 @@ MainWindow::saveFilterPool (QString namefile)
 	{
 		writer << item;
 	}
+	modified = true;
 }
 
 
@@ -143,6 +141,54 @@ MainWindow::on_actionClose_triggered ()
 {
 	mdiArea->currentSubWindow()->close();
 }
+
+void MainWindow::closeEvent(QCloseEvent* e)
+{
+	qDebug() << "closeEvent mainwindow";
+	QMainWindow::closeEvent(e);
+}
+
+
+void MainWindow::on_actionQuit_triggered()
+{
+	QString fileName;
+	if ( modified )
+	{
+		QMessageBox msgBox;
+		msgBox.setText(tr("Filter pool has been modified!"));
+		msgBox.setInformativeText(tr("Do you want to save your filter pool?"));
+		msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+		msgBox.setDefaultButton(QMessageBox::Save);
+		msgBox.setWindowTitle(tr("Save on quit?"));
+		int ret = msgBox.exec();
+		switch (ret)
+		{
+			case QMessageBox::Save:
+				
+				fileName = getFilename();
+				
+				if ( fileName.isEmpty() )
+				{
+					Ui_MainWindow::statusBar->showMessage(tr("Filters not saved, not quitting..."), 1000);
+					return;
+				}
+				
+				saveFilterPool(fileName);
+				break;
+			case QMessageBox::Discard:
+				break;
+			case QMessageBox::Cancel:
+				return;
+		}
+	}
+	
+	foreach(QMdiSubWindow* subWindow, mdiArea->subWindowList())
+	{
+		subWindow->close();
+	}	
+	close();
+}
+
 
 void MainWindow::open_configuration(const QList<GenericFilter>& filters )
 {
@@ -265,6 +311,8 @@ MainWindow::newFilter ()
 	
 	filter.setPriority( filterPool.count() );
 	filterPool.append( filter );
+	
+	modified = true;
 
 	MDIChild* currentChild  = getTopMDIChild();
 
@@ -272,17 +320,7 @@ MainWindow::newFilter ()
 		return;
 
 	currentChild->addFilter( filter );
-	
-// 	if ( ! newfilter->isSuppressor() )
-// 	{
-// 		qDebug() << "2 Current Child adding filter";
-// 		currentChild->addFilter(filter.first, *(filter.second));
-// 	}
-// 	else
-// 	{
-// 		qDebug() << "2 Current adding suppressor";
-// 		currentChild->addSuppressor(filter.first);
-// 	}
+
 }
 
 void
@@ -300,8 +338,7 @@ MainWindow::on_actionFilter_pool_triggered ()
 	filter->show();	
 }
 
-void
-MainWindow::on_actionSave_Filters_triggered ()
+QString MainWindow::getFilename()
 {
 	QString fileName = QFileDialog::getOpenFileName(this);
 
@@ -313,9 +350,22 @@ MainWindow::on_actionSave_Filters_triggered ()
 
 		if ( ret != QMessageBox::Yes )
 		{
-			Ui_MainWindow::statusBar->showMessage(tr("Filters not saved"), 1000);
-			return;
+			return QString();
 		}
+	}
+	return fileName;
+}
+
+
+void
+MainWindow::on_actionSave_Filters_triggered ()
+{
+	QString fileName = getFilename();
+	
+	if ( fileName.isEmpty() )
+	{
+		Ui_MainWindow::statusBar->showMessage(tr("Filters not saved"), 1000);
+		return;
 	}
 
 	saveFilterPool(fileName);

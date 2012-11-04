@@ -40,6 +40,7 @@ Tail::~Tail ()
 	QMutexLocker lock(&mutex);
 	abort = true;
 	waiter.wakeOne();
+	wait();
 	qDebug() << "~Tail";
 }
 
@@ -48,6 +49,7 @@ void Tail::stopProcess()
 	QMutexLocker lock(&mutex);
 	abort = true;
 	waiter.wakeOne();
+	wait();
 }
 
 void
