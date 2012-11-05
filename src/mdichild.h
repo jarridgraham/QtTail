@@ -34,13 +34,12 @@ class MDIChild: public QTextEdit
  	QString curFile;
 	Tail* worker;
 	QMap<GenericFilter, QTextCharFormat> filters;
-// 	QMap<GenericFilter, QTextCharFormat>* highlightFilter;
-// 	QList<GenericFilter> suppressiveFilter;
 	Highlighter* highlighter;
 	
 	void GoToPos(int position = -1);
 	QTextCharFormat setNewFormat(const Format& format);
 	bool doAddFilter(GenericFilter filter);
+	void suppress();
 protected:
 	void closeEvent(QCloseEvent *event);
 	

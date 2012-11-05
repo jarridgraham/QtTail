@@ -21,7 +21,7 @@
 #include "format.h"
 
 bool
-GenericFilter::match (const QString & s)
+GenericFilter::match (const QString & s) const
 {
 	qDebug() << "Match called";
 	if ( ! filterString.isEmpty() )

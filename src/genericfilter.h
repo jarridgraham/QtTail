@@ -57,7 +57,7 @@ public:
 	QString getString() const;
 	bool operator<(const GenericFilter& other) const { return priority < other.priority; }
 	bool operator==(const GenericFilter& other) const;
-	bool match(const QString& s);
+	bool match(const QString& s) const;
 	bool isSuppressor() const { return format == NULL; }
 
 	void setFormat(Format* format_) { if ( format != NULL ) format->deleteLater(); format = format_; }

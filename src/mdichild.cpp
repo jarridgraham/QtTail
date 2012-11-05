@@ -131,22 +131,34 @@ QTextCharFormat MDIChild::setNewFormat(const Format& format)
 	return newFormat;
 }
 
-// QMap< GenericFilter, Format* > MDIChild::getHighlightsFormats() const
-// {
-// 	QMap< GenericFilter, Format* > ret;
-// 
-// 	if ( highlightFilter == NULL )
-// 		return ret;
-// 
-// 	QMapIterator<GenericFilter, QTextCharFormat> i(*highlightFilter);
-// 	while (i.hasNext())
-// 	{
-// 		i.next();
-// 		Format* f = new Format ( i.value() );
-// 		ret.insert(i.key(), f);
-// 	}
-// }
+void MDIChild::suppress()
+{
+	QTextCursor current = textCursor();
+	QTextCursor tc = textCursor();
+	QTextCursor next = textCursor();
 
+	tc.movePosition( QTextCursor::Start );
+	next.movePosition( QTextCursor::Start );
+	
+	while ( next != current )
+	{
+		next = tc;
+		next.movePosition(QTextCursor::EndOfLine);
+		tc.select( QTextCursor::LineUnderCursor );
+		
+		for ( QMap<GenericFilter, QTextCharFormat>::iterator it = filters.begin(); it != filters.end(); ++it )
+		{
+			if ( it.key().isSuppressor() && it.key().match ( tc.selectedText() ) )
+			{
+				tc.removeSelectedText();
+				break;
+			}
+		}
+		setTextCursor(next);
+	}
+
+	setTextCursor( current );
+}
 
 
 bool MDIChild::addFilter(GenericFilter filter)
@@ -159,6 +171,7 @@ bool MDIChild::addFilter(GenericFilter filter)
 	doAddFilter( filter );
 
 	highlighter->rehighlight();
+	suppress();
 	return true;
 }
 
