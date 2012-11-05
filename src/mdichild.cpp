@@ -94,7 +94,9 @@ void MDIChild::receiveLine (QString line)
 	QTextCursor position = textCursor();
 	
 	GoToPos();
-	textCursor().insertText(line);
+
+	if ( ! toBeSuppressed( line ) )
+		textCursor().insertText(line);
 	
 	setTextCursor( position );
 }
@@ -131,33 +133,33 @@ QTextCharFormat MDIChild::setNewFormat(const Format& format)
 	return newFormat;
 }
 
+bool MDIChild::toBeSuppressed(QString text) const
+{
+	for ( QMap<GenericFilter, QTextCharFormat>::const_iterator it = filters.begin(); it != filters.end(); ++it )
+	{
+		if ( it.key().isSuppressor() && it.key().match ( text ) )
+			return true;
+	}
+	return false;
+}
+
+
+
 void MDIChild::suppress()
 {
-	QTextCursor current = textCursor();
-	QTextCursor tc = textCursor();
-	QTextCursor next = textCursor();
-
-	tc.movePosition( QTextCursor::Start );
-	next.movePosition( QTextCursor::Start );
-	
-	while ( next != current )
+	QTextBlock block = document()->begin();
+	while (block.isValid())
 	{
-		next = tc;
-		next.movePosition(QTextCursor::EndOfLine);
-		tc.select( QTextCursor::LineUnderCursor );
-		
-		for ( QMap<GenericFilter, QTextCharFormat>::iterator it = filters.begin(); it != filters.end(); ++it )
+		if (toBeSuppressed(block.text()))
 		{
-			if ( it.key().isSuppressor() && it.key().match ( tc.selectedText() ) )
-			{
-				tc.removeSelectedText();
-				break;
-			}
+			QTextCursor cursor(block);
+			block = block.next();
+			cursor.select(QTextCursor::BlockUnderCursor);
+			cursor.removeSelectedText();
 		}
-		setTextCursor(next);
+		else
+			block = block.next();
 	}
-
-	setTextCursor( current );
 }
 
 

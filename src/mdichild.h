@@ -39,6 +39,7 @@ class MDIChild: public QTextEdit
 	void GoToPos(int position = -1);
 	QTextCharFormat setNewFormat(const Format& format);
 	bool doAddFilter(GenericFilter filter);
+	bool toBeSuppressed(QString text) const;
 	void suppress();
 protected:
 	void closeEvent(QCloseEvent *event);

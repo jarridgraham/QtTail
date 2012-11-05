@@ -40,7 +40,7 @@ Highlighter::highlightBlock (const QString & text)
 	foreach (GenericFilter g, filters->keys() )
 	{
 		qDebug() << "Text: " << text << " g: " << g.getString(); 
-		if ( g.match(text) )
+		if ( ! g.isSuppressor() && g.match(text) )
 		{
 			qDebug() << "red: " << filters->value(g).foreground().color().red();
 			qDebug() << "blue: " << filters->value(g).foreground().color().blue();
