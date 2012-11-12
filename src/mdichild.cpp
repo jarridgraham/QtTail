@@ -58,7 +58,6 @@ MDIChild::MDIChild(const QString& fileName, int default_point_size): curFile(fil
 	}
 	else
 		curFile = QString();
-	
 }
 
 bool
@@ -92,7 +91,7 @@ void MDIChild::GoToPos(int position)
 void MDIChild::receiveLine (QString line)
 {
 	QTextCursor position = textCursor();
-	
+
 	GoToPos();
 
 	if ( ! toBeSuppressed( line ) )
@@ -205,16 +204,4 @@ void MDIChild::updateAllFilters(QList<GenericFilter> newfilters)
 	}
 }
 
-
-// bool MDIChild::addSuppressor(const GenericFilter& filter)
-// {
-// 	qDebug() << filter.getName();
-// 	if ( ! filter.isSuppressor() )
-// 		return false;
-// 	
-// 	if ( suppressiveFilter.contains( filter ) )
-// 		return false;
-// 	suppressiveFilter.append(filter);
-// 	return true;
-// }
 

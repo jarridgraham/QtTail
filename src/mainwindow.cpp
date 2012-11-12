@@ -20,6 +20,7 @@
 #include "mdichild.h"
 #include "filterconfig.h"
 #include "filtermodel.h"
+#include "findwindow.h"
 #include "newfilter.h"
 
 #include <QFileDialog>
@@ -32,7 +33,7 @@
 
 const int DEFAULT_FONT_WEIGHT = 8;
 
-MainWindow::MainWindow ():QMainWindow (0), modified(false)
+MainWindow::MainWindow ():QMainWindow (0), modified(false), findwindow(NULL)
 {
 	setupUi(this);
 	Ui_MainWindow::statusBar->showMessage(tr("Going"), 1000);
@@ -100,7 +101,6 @@ MainWindow::saveFilterPool (QString namefile)
 
 MDIChild *MainWindow::createMDIChild(const QString& fileName)
 {
-	qDebug() << "Qui..." + fileName;
 	MDIChild *child = new MDIChild(fileName, DEFAULT_FONT_WEIGHT);
 
 	if ( child->isValid() )
@@ -144,7 +144,7 @@ MainWindow::on_actionClose_triggered ()
 
 void MainWindow::closeEvent(QCloseEvent* e)
 {
-	qDebug() << "closeEvent mainwindow";
+	findwindow->close();
 	QMainWindow::closeEvent(e);
 }
 
@@ -210,7 +210,6 @@ MainWindow::addHighlightFilter (const GenericFilter & filter)
 	addFilter2Current(filter);
 }
 
-
 void
 MainWindow::on_actionFilter_configuration_triggered ()
 {
@@ -218,17 +217,6 @@ MainWindow::on_actionFilter_configuration_triggered ()
 
 	open_configuration( child->getFilters() );
 }
-
-//! @todo this method is not needed (the same as menu item)
-void
-MainWindow::on_actionSuppression_configuration_triggered ()
-{
-	MDIChild* child = getTopMDIChild();
-	
-	open_configuration( child->getFilters() );
-}
-
-
 void
 MainWindow::on_actionNew_filter_triggered ()
 {
@@ -356,6 +344,73 @@ QString MainWindow::getFilename()
 	return fileName;
 }
 
+// void MainWindow::closeFinder()
+// {
+// 	foreach (QMdiSubWindow *window, mdiArea->subWindowList())
+// 	{
+// 		MDIChild *mdiChild = qobject_cast<MDIChild *>(window->widget());
+// 	}
+// }
+
+
+void MainWindow::on_actionFind_triggered()
+{
+	if ( mdiArea->subWindowList().count() == 0 )
+		return;
+	
+	findwindow = new FindWindow(this);
+
+	connect( findwindow, SIGNAL(find(const QString&,  QTextDocument::FindFlags)), this,
+		 SLOT(finderWrapper(const QString&, QTextDocument::FindFlags) ) );
+	connect( findwindow, SIGNAL(find(const QRegExp&, QTextDocument::FindFlags)), this,
+		 SLOT(finderWrapper(const QRegExp&, QTextDocument::FindFlags) ) );
+
+	findwindow->show();
+}
+
+void MainWindow::finderWrapper(const QString& str, QTextDocument::FindFlags flags)
+{
+	MDIChild* active = getTopMDIChild();
+	if ( active == NULL )
+		return;
+
+	QTextDocument* current_doc = active->document();
+
+	if ( ! ( findStatus.equals( str, flags ) && findStatus.searched == active ) )
+	{
+		findStatus.findcur = active->textCursor();
+		QTextCursor found = current_doc->find(str, findStatus.findcur, flags);
+		if ( ! found.isNull() )
+		{
+			active->setTextCursor( found );
+		}
+	}
+
+	findStatus.searched = active;
+}
+
+void MainWindow::finderWrapper(const QRegExp& str, QTextDocument::FindFlags flags)
+{
+	MDIChild* active = getTopMDIChild();
+	if ( active == NULL )
+		return;
+
+	QTextDocument* current_doc = active->document();
+	
+	if ( ! findStatus.equals( str, flags ) )
+	{
+		findStatus.findcur = active->textCursor();
+		QTextCursor found = current_doc->find(str, findStatus.findcur, flags);
+		if ( ! found.isNull() )
+		{
+			active->setTextCursor( found );
+		}
+	}
+
+	findStatus.searched = active;
+
+	//! TODO What happens when I move the cursor to the end?
+}
 
 void
 MainWindow::on_actionSave_Filters_triggered ()
@@ -390,7 +445,8 @@ MainWindow::on_actionQTail_triggered ()
 
 MainWindow::~MainWindow()
 {
-
+	findwindow->close();
+	findwindow->deleteLater();
 }
 
 

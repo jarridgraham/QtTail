@@ -21,6 +21,7 @@
 
 #include <QWidget>
 #include <QTextCharFormat>
+#include <QTextDocument>
 #include <QHash>
 
 #include "newfilter.h"
@@ -36,6 +37,20 @@ class MainWindow: public QMainWindow, private Ui::MainWindow
 	NewFilter* newfilter;
 	QList<GenericFilter> filterPool;
 	bool modified;
+	QDialog* findwindow; 
+	
+	struct
+	{
+		bool isRegexp;
+		QRegExp reg;
+		QString match;
+		QTextDocument::FindFlags flags;
+		MDIChild* searched;
+		bool equals(QRegExp r, QTextDocument::FindFlags f) { return isRegexp && reg == r && f == flags; }
+		bool equals(QString r, QTextDocument::FindFlags f) { return ! isRegexp && match == r && f == flags; }
+
+		QTextCursor findcur;
+	} findStatus;
 
 	void loadFilterPool(QString namefile);
 	void saveFilterPool(QString namefile);
@@ -52,20 +67,22 @@ private slots:
 	void on_actionSave_Filters_triggered();
 	void on_actionClose_triggered();
 	void on_actionFilter_configuration_triggered();
-	void on_actionSuppression_configuration_triggered();
 	void on_actionNew_filter_triggered();
 	void on_actionFilter_pool_triggered();
 	void on_actionQTail_triggered();
 	void on_actionQuit_triggered();
+	void on_actionFind_triggered();
 
 	void newFilter();
 	void addFilter2Current(GenericFilter filter);
 	void addHighlightFilter(const GenericFilter& filter);
 
+	void finderWrapper(const QString& str,  QTextDocument::FindFlags flags);
+	void finderWrapper(const QRegExp& str,  QTextDocument::FindFlags flags);
+// 	void closeFinder();
 protected:
 	void changeEvent(QEvent *e);
 	void closeEvent(QCloseEvent* e);
-
 public:
 	MainWindow();
 	virtual ~MainWindow();

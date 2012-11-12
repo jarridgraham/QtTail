@@ -31,7 +31,7 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>Fi&amp;le</string>
     </property>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
@@ -44,19 +44,19 @@
    </widget>
    <widget class="QMenu" name="menuFilter">
     <property name="title">
-     <string>Filter</string>
+     <string>&amp;Document</string>
     </property>
     <addaction name="actionFilter_configuration"/>
     <addaction name="actionReset_Highlighter"/>
-    <addaction name="actionSuppressor_configuration"/>
-    <addaction name="actionReset_filters"/>
     <addaction name="separator"/>
     <addaction name="actionNew_filter"/>
     <addaction name="actionFilter_pool"/>
+    <addaction name="separator"/>
+    <addaction name="actionFind"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
-     <string>About</string>
+     <string>A&amp;bout</string>
     </property>
     <addaction name="actionQTail"/>
    </widget>
@@ -75,22 +75,25 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionQuit">
    <property name="text">
-    <string>Quit</string>
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
   <action name="actionOpen">
    <property name="text">
-    <string>Open</string>
+    <string>&amp;Open</string>
    </property>
   </action>
   <action name="actionClose">
    <property name="text">
-    <string>Close</string>
+    <string>&amp;Close</string>
    </property>
   </action>
   <action name="actionSave">
    <property name="text">
-    <string>Save output</string>
+    <string>&amp;Save output</string>
    </property>
   </action>
   <action name="actionHighlight">
@@ -105,17 +108,17 @@
   </action>
   <action name="actionQTail">
    <property name="text">
-    <string>QTail</string>
+    <string>QTa&amp;il</string>
    </property>
   </action>
   <action name="actionFilter_configuration">
    <property name="text">
-    <string>Filter configuration</string>
+    <string>Filter &amp;configuration</string>
    </property>
   </action>
   <action name="actionNew_filter">
    <property name="text">
-    <string>New filter</string>
+    <string>&amp;New filter</string>
    </property>
   </action>
   <action name="actionReset_filters">
@@ -125,22 +128,22 @@
   </action>
   <action name="actionReset_Highlighter">
    <property name="text">
-    <string>Reset filter</string>
+    <string>&amp;Reset filter</string>
    </property>
   </action>
   <action name="actionFilter_pool">
    <property name="text">
-    <string>Filter pool</string>
+    <string>Filter &amp;pool</string>
    </property>
   </action>
   <action name="actionOpen_Filters">
    <property name="text">
-    <string>Open Filters</string>
+    <string>O&amp;pen Filters</string>
    </property>
   </action>
   <action name="actionSave_Filters">
    <property name="text">
-    <string>Save Filters</string>
+    <string>Sa&amp;ve Filters</string>
    </property>
   </action>
   <action name="actionSuppressor_configuration">
@@ -150,12 +153,17 @@
   </action>
   <action name="actionCascade">
    <property name="text">
-    <string>Cascade</string>
+    <string>Cascad&amp;e</string>
    </property>
   </action>
   <action name="actionTile">
    <property name="text">
-    <string>Tile</string>
+    <string>&amp;Tile</string>
+   </property>
+  </action>
+  <action name="actionFind">
+   <property name="text">
+    <string>&amp;Find</string>
    </property>
   </action>
  </widget>

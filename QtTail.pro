@@ -19,8 +19,9 @@ HEADERS += src/filterconfig.h \
            src/mainwindow.h \
            src/mdichild.h \
            src/newfilter.h \
+           src/findwindow.h \
            src/tail.h
-FORMS += src/filters.ui src/filtersconfig.ui src/mainwindow.ui
+FORMS += src/filters.ui src/filtersconfig.ui src/mainwindow.ui src/find.ui
 SOURCES += src/filterconfig.cpp \
            src/filtermodel.cpp \
            src/filtervalidator.cpp \
@@ -31,4 +32,5 @@ SOURCES += src/filterconfig.cpp \
            src/mainwindow.cpp \
            src/mdichild.cpp \
            src/newfilter.cpp \
-           src/tail.cpp
+           src/tail.cpp \
+           src/findwindow.cpp
