@@ -27,20 +27,6 @@ FilterModel::FilterModel (QList < GenericFilter > filters, QObject * parent):QAb
 	qSort(rawData);
 }
 
-
-// QPair < GenericFilter, Format * >FilterModel::completeData (const GenericFilter & key) const
-// {
-// 	QPair<GenericFilter, Format*> p;
-// 	p.first = key;
-// 	
-// 	if ( outer_filters.count() == 0 || ! outer_filters.contains( key ) )
-// 		p.second = NULL;
-// 	else
-// 		p.second = outer_filters.value( key );
-// 
-// 	return p;
-// }
-
 void
 FilterModel::setData (const QList < GenericFilter >& filters)
 {
