@@ -22,6 +22,7 @@
 #include "filtermodel.h"
 #include "findwindow.h"
 #include "newfilter.h"
+#include "about.h"
 
 #include <QFileDialog>
 #include <QMdiSubWindow>
@@ -440,7 +441,9 @@ void MainWindow::on_actionOpen_Filters_triggered()
 void
 MainWindow::on_actionQTail_triggered ()
 {
+	QDialog* about = new About(this);
 
+	about->show();
 }
 
 MainWindow::~MainWindow()

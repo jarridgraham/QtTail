@@ -4,6 +4,7 @@ FORMS += mainwindow.ui
 FORMS += filters.ui
 FORMS += filtersconfig.ui
 FORMS += find.ui
+FORMS += about.ui
 
 SOURCES += main.cpp
 SOURCES += mainwindow.cpp
@@ -28,6 +29,7 @@ HEADERS += filtervalidator.h
 HEADERS += filtermodel.h
 HEADERS += format.h
 HEADERS += findwindow.h
+HEADERS += about.h
 MOC_DIR = build
 OBJECTS_DIR = build
 UI_DIR = build
