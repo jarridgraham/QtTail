@@ -35,7 +35,6 @@ class FilterModel:public QAbstractTableModel
 
 	FilterConfigType type;
 	QList<GenericFilter> rawData;
-// 	QMap<GenericFilter, Format*> outer_filters;
 public:
 	FilterModel ( QList<GenericFilter> filters, QObject* parent = 0);
 
@@ -61,12 +60,14 @@ public:
 	virtual bool removeColumns (int column, int count,
 			      const QModelIndex & parent = QModelIndex ());
 	virtual Qt::ItemFlags flags (const QModelIndex & index) const;
-	virtual void sort ( int column, Qt::SortOrder order = Qt::AscendingOrder );
+	virtual void sort ( int column = 0, Qt::SortOrder order = Qt::AscendingOrder );
 	virtual ~ FilterModel ();
-
+public slots:
+	virtual bool submit();
 signals:
 	void deleteFilter(GenericFilter);
 	void addFilter(GenericFilter);
+	void newFilters(const QList<GenericFilter>& filters) const;
 };
 
 #endif // FILTERMODEL_H

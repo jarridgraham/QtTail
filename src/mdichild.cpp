@@ -24,13 +24,10 @@
 void
 MDIChild::closeEvent (QCloseEvent * event)
 {
-	qDebug() << "closeEvent";
 }
 
 MDIChild::MDIChild(const QString& fileName, int default_point_size): curFile(fileName)
 {
-	qDebug() << "MDIChild coming";
-	
 	GoToPos();
 	
 	worker = new Tail(fileName, this);
@@ -68,7 +65,6 @@ MDIChild::isValid () const
 
 MDIChild::~MDIChild ()
 {
-	qDebug() << "~MDIChild";
 }
 
 void MDIChild::GoToPos(int position)
@@ -202,6 +198,9 @@ void MDIChild::updateAllFilters(QList<GenericFilter> newfilters)
 	{
 		doAddFilter( it );
 	}
+
+	highlighter->rehighlight();
+	suppress();
 }
 
 

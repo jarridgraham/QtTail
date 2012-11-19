@@ -22,6 +22,7 @@
 
 #include <QDialog>
 #include <QContextMenuEvent>
+#include "filtermodel.h"
 #include "genericfilter.h"
 #include "newfilter.h"
 #include "ui_filtersconfig.h"
@@ -31,7 +32,7 @@ class FilterConfig : public QDialog
 	Q_OBJECT
 
 	Ui::FilterConfigDialog ui;
-	QAbstractTableModel* Model;
+	QAbstractItemModel* Model;
 	NewFilter* editWindow;
 
 	QModelIndexList getSelectedItems() const;
@@ -40,14 +41,19 @@ class FilterConfig : public QDialog
 	QModelIndex bookmark;
 private slots:
 	void updateFilter();
+	void sort();
 protected slots:
 	virtual void contextMenuEvent(QContextMenuEvent *event);
+public slots:
+	virtual void accept();
 protected:
 	void changeEvent(QEvent *e);
 public: 
-	FilterConfig (QAbstractTableModel* mod, QWidget * parent = 0);
-	QAbstractTableModel* model() const { return Model; }
+	FilterConfig (QAbstractItemModel* mod, QWidget * parent = 0);
+	QAbstractItemModel* model() const { return Model; }
 	virtual ~FilterConfig () { }
+signals:
+	void newFilters(QList<GenericFilter> filters);
 };
 
 #endif // FILTERCONFIG_H

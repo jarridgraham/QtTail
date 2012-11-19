@@ -19,7 +19,7 @@
 #include <QtAlgorithms>
 #include "filtermodel.h"
 
-enum Columns { NAME = 0, STRING = 1, PRIO = 2, LAST = PRIO  };
+enum Columns { NAME = 0, STRING = 1, PRIO = 2, SUPPRESS = 3, LAST = SUPPRESS  };
 	
 
 FilterModel::FilterModel (QList < GenericFilter > filters, QObject * parent):QAbstractTableModel(parent), rawData(filters)
@@ -59,6 +59,14 @@ FilterModel::data (const QModelIndex & index, int role) const
 			return rawData.at(index.row()).getString();
 		if ( index.column() == PRIO )
 			return rawData.at(index.row()).getPriority();
+		if ( index.column() == SUPPRESS )
+		{
+			if (rawData.at(index.row()).isSuppressor())
+				return QString(tr("Suppressor"));
+			else
+				return QString(tr("Highlighter"));
+		}
+
 	}
 	return QVariant();
 }
@@ -142,6 +150,7 @@ FilterModel::insertRows (int row, int count, const QModelIndex & parent)
 	{
 		rawData.insert(row, GenericFilter());
 	}
+	sort();
 	
 	endInsertRows();
 	return true;
@@ -163,6 +172,7 @@ FilterModel::removeRows (int row, int count, const QModelIndex & parent)
 		emit deleteFilter( rawData.at(row) );
 		rawData.removeAt(row);
 	}
+
 	endRemoveRows();
 	return true;
 }
@@ -187,10 +197,19 @@ Qt::ItemFlags FilterModel::flags (const QModelIndex & index) const
 void FilterModel::sort(int column, Qt::SortOrder order)
 {
 	qStableSort(rawData);
+	reset();
 }
 
 FilterModel::~FilterModel()
 {
-
 }
+
+bool FilterModel::submit()
+{
+	if ( type == DOCUMENT )
+		emit newFilters(rawData);
+
+	return true;
+}
+
 

@@ -133,5 +133,11 @@ GenericFilter::GenericFilter(const GenericFilter& other)
 	}
 	else
 		format = NULL;
+
+	qDebug() << "Reg:" << filterReg;
+	qDebug() << "String:" << filterString;
+	qDebug() << "prio" << priority;
+	qDebug() << "name" << name_;
+	qDebug() << "format" << format;
 }
 

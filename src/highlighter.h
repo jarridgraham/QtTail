@@ -29,8 +29,6 @@
 class Highlighter: public QSyntaxHighlighter
 {
 	QMap<GenericFilter,QTextCharFormat>* filters;
-	
-	
 protected:
 	void highlightBlock(const QString &text);
 public:

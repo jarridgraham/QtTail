@@ -50,9 +50,29 @@ NewFilter::NewFilter (QWidget * parent, int defaultFontWeight):QDialog (parent),
 	setConnections();
 }
 
-NewFilter::NewFilter (QWidget * parent, GenericFilter filter_):
+NewFilter::NewFilter (QWidget * parent, GenericFilter filter_, int defaultFontWeight):
 	QDialog(parent)
 {
+	ui.setupUi(this);
+
+	ui.lineFilter->setValidator( new FilterValidator(MATCH, this)  );
+
+	int n = -1;
+	QStringList fontSizes;
+	for ( int i = 8; i < 64; i+=4)
+	{
+		fontSizes.append( QString::number(i));
+		if ( i <= defaultFontWeight ) ++n;
+
+	}
+
+	ui.fontSizeComboBox->insertItems(0, fontSizes);
+
+	if ( defaultFontWeight > 0 && n >= 0 )
+	{
+		ui.fontSizeComboBox->setCurrentIndex( n );
+	}
+	
 	setConnections();
 	setFilter(filter_);
 
@@ -66,7 +86,6 @@ NewFilter::setConnections ()
 	connect(ui.comboBoxFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(changeFilterType(int)));
 	connect(ui.comboBoxMatch, SIGNAL(currentIndexChanged(int)),this, SLOT(changeFilterMatch(int)));
 	connect(this, SIGNAL(typeChanged(filterType)),ui.lineFilter->validator(),SLOT(changeState(filterType)));
-// 	connect(this,SIGNAL(accepted()),this,SLOT(returnFormat()));
 }
 
 void

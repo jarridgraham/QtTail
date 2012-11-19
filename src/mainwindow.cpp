@@ -32,8 +32,6 @@
 
 #include <QDebug>
 
-const int DEFAULT_FONT_WEIGHT = 8;
-
 MainWindow::MainWindow ():QMainWindow (0), modified(false), findwindow(NULL)
 {
 	setupUi(this);
@@ -102,12 +100,12 @@ MainWindow::saveFilterPool (QString namefile)
 
 MDIChild *MainWindow::createMDIChild(const QString& fileName)
 {
-	MDIChild *child = new MDIChild(fileName, DEFAULT_FONT_WEIGHT);
+	MDIChild *child = new MDIChild(fileName);
 
 	if ( child->isValid() )
 	{
 
-		child->setFontWeight( DEFAULT_FONT_WEIGHT );
+		child->setFontWeight( 8 ); //Defined in NewFilter too
 		child->setAttribute(Qt::WA_DeleteOnClose);
 		connect(child,SIGNAL(destroyed(QObject*)),this,SLOT(mdiDestroyed(QObject*)));
 		QMdiSubWindow* sub = mdiArea->addSubWindow(child);
@@ -122,7 +120,6 @@ MDIChild *MainWindow::createMDIChild(const QString& fileName)
 void
 MainWindow::on_actionOpen_triggered ()
 {
-
 	QString fileName = QFileDialog::getOpenFileName(this);
 
 	if ( fileName.isEmpty() )
@@ -145,13 +142,6 @@ MainWindow::on_actionClose_triggered ()
 
 void MainWindow::closeEvent(QCloseEvent* e)
 {
-	findwindow->close();
-	QMainWindow::closeEvent(e);
-}
-
-
-void MainWindow::on_actionQuit_triggered()
-{
 	QString fileName;
 	if ( modified )
 	{
@@ -165,33 +155,42 @@ void MainWindow::on_actionQuit_triggered()
 		switch (ret)
 		{
 			case QMessageBox::Save:
-				
+
 				fileName = getFilename();
-				
+
 				if ( fileName.isEmpty() )
 				{
 					Ui_MainWindow::statusBar->showMessage(tr("Filters not saved, not quitting..."), 1000);
 					return;
 				}
-				
+
 				saveFilterPool(fileName);
 				break;
 			case QMessageBox::Discard:
 				break;
 			case QMessageBox::Cancel:
+				e->ignore();
 				return;
 		}
 	}
-	
+
 	foreach(QMdiSubWindow* subWindow, mdiArea->subWindowList())
 	{
 		subWindow->close();
-	}	
+	}
+	
+	if ( findwindow != NULL ) findwindow->close();
+	QMainWindow::closeEvent(e);
+}
+
+
+void MainWindow::on_actionQuit_triggered()
+{
 	close();
 }
 
 
-void MainWindow::open_configuration(const QList<GenericFilter>& filters )
+void MainWindow::open_configuration(const QList<GenericFilter>& filters, MDIChild* child )
 {
 	FilterModel* model = new FilterModel(filters);
 	
@@ -202,6 +201,7 @@ void MainWindow::open_configuration(const QList<GenericFilter>& filters )
 
 	QDialog* filter = new FilterConfig(model, this);
 
+	connect(model, SIGNAL(newFilters(const QList<GenericFilter>&)), child, SLOT(updateAllFilters(const QList<GenericFilter>&)));
 	filter->show();
 }
 
@@ -212,16 +212,46 @@ MainWindow::addHighlightFilter (const GenericFilter & filter)
 }
 
 void
+MainWindow::noAction () const
+{
+	QMessageBox msgBox;
+	msgBox.setWindowTitle(tr("Warning"));
+	msgBox.setText(tr("No action is possible without an active document!"));
+	msgBox.exec();
+}
+void
 MainWindow::on_actionFilter_configuration_triggered ()
 {
 	MDIChild* child = getTopMDIChild();
 
-	open_configuration( child->getFilters() );
+	if ( child == NULL )
+	{
+		noAction();
+		return;
+	}
+		
+	open_configuration( child->getFilters(), child );
 }
+
+void
+MainWindow::on_actionReset_Highlighter_triggered ()
+{
+	MDIChild* child = getTopMDIChild();
+
+	if ( child == NULL )
+	{
+		noAction();
+		return;
+	}
+
+	child->resetFilters();
+}
+
+
 void
 MainWindow::on_actionNew_filter_triggered ()
 {
-	newfilter = new NewFilter(this, DEFAULT_FONT_WEIGHT);
+	newfilter = new NewFilter(this);
 
 	connect(newfilter,SIGNAL(accepted()),this,SLOT(newFilter()));
 
@@ -309,7 +339,6 @@ MainWindow::newFilter ()
 		return;
 
 	currentChild->addFilter( filter );
-
 }
 
 void
@@ -344,15 +373,6 @@ QString MainWindow::getFilename()
 	}
 	return fileName;
 }
-
-// void MainWindow::closeFinder()
-// {
-// 	foreach (QMdiSubWindow *window, mdiArea->subWindowList())
-// 	{
-// 		MDIChild *mdiChild = qobject_cast<MDIChild *>(window->widget());
-// 	}
-// }
-
 
 void MainWindow::on_actionFind_triggered()
 {
@@ -448,8 +468,11 @@ MainWindow::on_actionQTail_triggered ()
 
 MainWindow::~MainWindow()
 {
-	findwindow->close();
-	findwindow->deleteLater();
+	if ( findwindow != NULL )
+	{
+		findwindow->close();
+		findwindow->deleteLater();
+	}
 }
 
 

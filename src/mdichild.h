@@ -50,7 +50,7 @@ public:
 	virtual ~MDIChild();
 	bool addFilter(GenericFilter filter);
 	void removeFilter(GenericFilter filter);
-	void updateAllFilters(QList<GenericFilter> newfilters);
+	void resetFilters() { updateAllFilters( QList<GenericFilter>() ); }
 
 	QList<GenericFilter> getFilters() const { return filters.keys(); }
 
@@ -58,6 +58,7 @@ public:
 	QString currentFile() const { return curFile; }
 
 public slots:
+	void updateAllFilters(QList<GenericFilter> newfilters);
 	void receiveLine(QString line);
 };
 

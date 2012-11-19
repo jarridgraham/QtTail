@@ -27,7 +27,7 @@
 #include "format.h"
 
 enum filterType { REGEXP = 1, MATCH = 0 };
-enum filterBehaviour { HIGHLIGHT = 0, SUPPRESS = 1 };
+//enum filterBehaviour { HIGHLIGHT = 0, SUPPRESS = 1 };
 
 class GenericFilter
 {

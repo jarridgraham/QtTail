@@ -27,8 +27,6 @@
 #include "filtervalidator.h"
 #include "format.h"
 
-
-
 class NewFilter:public QDialog
 {
 	Q_OBJECT
@@ -51,8 +49,8 @@ private slots:
 protected:
 	void changeEvent(QEvent *e);
 public:
-	NewFilter (QWidget * parent, int defaultFontWeight);
-	NewFilter (QWidget * parent, GenericFilter filter_);
+	NewFilter (QWidget * parent, int defaultFontWeight = 8);
+	NewFilter (QWidget * parent, GenericFilter filter_, int defaultFontWeight = 8);
 	GenericFilter getFilter() const;
 	QString getName() const;
 	bool isSuppressor() const { return suppressor; }

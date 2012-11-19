@@ -25,7 +25,7 @@
 #include <QItemSelectionModel>
 #include <QDebug>
 
-void FilterConfig :: changeEvent(QEvent *e)
+void FilterConfig::changeEvent(QEvent *e)
 {
 	QWidget::changeEvent(e);
 	switch (e->type())
@@ -38,7 +38,6 @@ void FilterConfig :: changeEvent(QEvent *e)
 	}
 }
 
-//! @note If single line we can edit!
 void
 FilterConfig::contextMenuEvent (QContextMenuEvent *event)
 {
@@ -107,6 +106,11 @@ FilterConfig::addMultipleRows ( const QModelIndexList& list )
 	}
 }
 
+void FilterConfig::sort()
+{
+	Model->sort(2);
+}
+
 QModelIndexList FilterConfig::getSelectedItems() const
 {
 	QItemSelectionModel* SelectionModel = ui.tableFilters->selectionModel();
@@ -116,16 +120,19 @@ QModelIndexList FilterConfig::getSelectedItems() const
 	return selected;
 }
 
-FilterConfig::FilterConfig(QAbstractTableModel* mod, QWidget* parent): QDialog(parent ),Model(mod)
+FilterConfig::FilterConfig(QAbstractItemModel* mod, QWidget* parent): QDialog(parent ),Model(mod)
 {
 	ui.setupUi(this);
 	ui.tableFilters->setSelectionBehavior(QAbstractItemView::SelectRows);
 	ui.tableFilters->setModel(mod);
-
-	const QItemSelectionModel* SelectionModel = ui.tableFilters->selectionModel();
-
-	QObject::connect (ui.tableFilters,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(contextMenuEvent(const QPoint &)));
-
 	ui.tableFilters->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+	connect(ui.pbSort, SIGNAL(clicked()), this, SLOT(sort()) );
 }
+
+void FilterConfig::accept()
+{
+	Model->submit();
+	//QDialog::accept();
+}
+
 

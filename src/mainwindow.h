@@ -58,8 +58,8 @@ class MainWindow: public QMainWindow, private Ui::MainWindow
 	QMdiSubWindow* findMDIChild(const QString &fileName);
 	MDIChild* getTopMDIChild();
 	void getDefaultFormat(MDIChild* currentChild, Format& form) const;
-	void open_configuration(const QList<GenericFilter>& filters );
-	void deleteFilter(GenericFilter filter);
+	void open_configuration(const QList<GenericFilter>& filters, MDIChild* child );
+	void noAction() const;
 	QString getFilename();
 private slots:
 	void on_actionOpen_Filters_triggered();
@@ -72,14 +72,15 @@ private slots:
 	void on_actionQTail_triggered();
 	void on_actionQuit_triggered();
 	void on_actionFind_triggered();
+	void on_actionReset_Highlighter_triggered();
 
 	void newFilter();
 	void addFilter2Current(GenericFilter filter);
+	void deleteFilter(GenericFilter filter);
 	void addHighlightFilter(const GenericFilter& filter);
 
 	void finderWrapper(const QString& str,  QTextDocument::FindFlags flags);
 	void finderWrapper(const QRegExp& str,  QTextDocument::FindFlags flags);
-// 	void closeFinder();
 protected:
 	void changeEvent(QEvent *e);
 	void closeEvent(QCloseEvent* e);
