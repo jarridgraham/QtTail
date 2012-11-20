@@ -120,7 +120,7 @@ QDataStream &operator>>(QDataStream & in, GenericFilter & filter )
 	return in;
 }
 
-GenericFilter::GenericFilter(const GenericFilter& other)
+void GenericFilter::assignment(const GenericFilter& other)
 {
 	filterReg = other.filterReg;
 	filterString = other.filterString;
@@ -133,11 +133,22 @@ GenericFilter::GenericFilter(const GenericFilter& other)
 	}
 	else
 		format = NULL;
+}
 
-	qDebug() << "Reg:" << filterReg;
-	qDebug() << "String:" << filterString;
-	qDebug() << "prio" << priority;
-	qDebug() << "name" << name_;
-	qDebug() << "format" << format;
+GenericFilter& GenericFilter::operator=(const GenericFilter& other)
+{
+	assignment(other);
+	return *this;
+}
+
+GenericFilter::GenericFilter(const GenericFilter& other)
+{
+	assignment(other);
+
+// 	qDebug() << "Reg:" << filterReg;
+// 	qDebug() << "String:" << filterString;
+// 	qDebug() << "prio" << priority;
+// 	qDebug() << "name" << name_;
+// 	qDebug() << "format" << format;
 }
 

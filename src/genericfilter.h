@@ -23,6 +23,7 @@
 #include <QHash>
 #include <QDataStream>
 #include <QRegExp>
+#include <QPointer>
 #include <QVariant>
 #include "format.h"
 
@@ -37,7 +38,8 @@ class GenericFilter
 	int priority;
 
 	Format* format;
-	
+
+	void assignment(const GenericFilter& other);
 	friend uint qHash(const GenericFilter& filter);
 	friend QDataStream &operator<<(QDataStream &, const GenericFilter &);
 	friend QDataStream &operator>>(QDataStream &, GenericFilter &);
@@ -57,6 +59,7 @@ public:
 	QString getString() const;
 	bool operator<(const GenericFilter& other) const { return priority < other.priority; }
 	bool operator==(const GenericFilter& other) const;
+	GenericFilter& operator=(const GenericFilter& other);
 	bool match(const QString& s) const;
 	bool isSuppressor() const { return format == NULL; }
 
