@@ -68,6 +68,11 @@ FilterModel::data (const QModelIndex & index, int role) const
 		}
 
 	}
+
+	if ( role == Qt::UserRole )
+	{
+		return rawData.at(index.row());
+	}
 	return QVariant();
 }
 
@@ -121,6 +126,9 @@ FilterModel::headerData (int section, Qt::Orientation orientation, int role) con
 
 		if ( section == PRIO )
 			return tr("Priority");
+
+		if ( section == SUPPRESS )
+			return tr("Filter type");
 	}
 
 	if ( orientation == Qt::Horizontal )
@@ -133,6 +141,9 @@ FilterModel::headerData (int section, Qt::Orientation orientation, int role) con
 
 		if ( section == PRIO )
 			return tr("Priority");
+		
+		if ( section == SUPPRESS )
+			return tr("Filter type");
 	}
 
 	return QVariant();
@@ -165,11 +176,10 @@ FilterModel::insertColumns (int column, int count, const QModelIndex & parent)
 bool
 FilterModel::removeRows (int row, int count, const QModelIndex & parent)
 {
-	beginRemoveRows(QModelIndex(), row, row+count);
+	beginRemoveRows(QModelIndex(), row, row+count-1);
 
 	for ( int irow = 0; irow < count; ++irow )
 	{
-		emit deleteFilter( rawData.at(row) );
 		rawData.removeAt(row);
 	}
 
@@ -196,8 +206,9 @@ Qt::ItemFlags FilterModel::flags (const QModelIndex & index) const
 
 void FilterModel::sort(int column, Qt::SortOrder order)
 {
+	beginResetModel();
 	qStableSort(rawData);
-	reset();
+	endResetModel();
 }
 
 FilterModel::~FilterModel()

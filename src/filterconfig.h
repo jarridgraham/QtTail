@@ -54,6 +54,8 @@ public:
 	virtual ~FilterConfig () { }
 signals:
 	void newFilters(QList<GenericFilter> filters);
+	void deleteFilter(GenericFilter filter);
+	void addFilter(GenericFilter filter);
 };
 
 #endif // FILTERCONFIG_H

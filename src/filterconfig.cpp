@@ -49,6 +49,9 @@ FilterConfig::contextMenuEvent (QContextMenuEvent *event)
 
 	QModelIndexList selection = getSelectedItems();
 
+	if ( selection.isEmpty() )
+		return;
+
 	QAction* edit = NULL;
 	if ( selection.count() == 1 )
 	{
@@ -74,7 +77,7 @@ FilterConfig::contextMenuEvent (QContextMenuEvent *event)
 	else if ( selected == edit )
 	{
 		bookmark = selection.front();
-		GenericFilter filter = Model->data( bookmark ).value<GenericFilter>();
+		GenericFilter filter = Model->data( bookmark, Qt::UserRole ).value<GenericFilter>();
 		editWindow = new NewFilter(this, filter);
 		connect(editWindow,SIGNAL(accepted()),this,SLOT(updateFilter()));
 		editWindow->show();
@@ -93,7 +96,10 @@ FilterConfig::deleteMultipleRows ( const QModelIndexList& list )
 {
 	foreach ( QModelIndex item, list )
 	{
+// 		GenericFilter filter = item.data(item, Qt::UserRole).value<GenericFilter>();
+		GenericFilter filter = Model->data(item, Qt::UserRole).value<GenericFilter>();
 		Model->removeRow( item.row() );
+		emit deleteFilter( filter );
 	}
 }
 
@@ -102,7 +108,9 @@ FilterConfig::addMultipleRows ( const QModelIndexList& list )
 {
 	foreach ( QModelIndex item, list )
 	{
-		GenericFilter filter;
+// 		GenericFilter filter = item.data(item, Qt::UserRole).value<GenericFilter>();
+		GenericFilter filter = Model->data(item, Qt::UserRole).value<GenericFilter>();
+		emit addFilter(filter);
 	}
 }
 
@@ -132,7 +140,7 @@ FilterConfig::FilterConfig(QAbstractItemModel* mod, QWidget* parent): QDialog(pa
 void FilterConfig::accept()
 {
 	Model->submit();
-	//QDialog::accept();
+	QDialog::accept();
 }
 
 

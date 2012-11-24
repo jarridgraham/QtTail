@@ -65,8 +65,6 @@ public:
 public slots:
 	virtual bool submit();
 signals:
-	void deleteFilter(GenericFilter);
-	void addFilter(GenericFilter);
 	void newFilters(const QList<GenericFilter>& filters) const;
 };
 

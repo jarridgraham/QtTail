@@ -107,7 +107,7 @@ MDIChild *MainWindow::createMDIChild(const QString& fileName)
 
 		child->setFontWeight( 8 ); //Defined in NewFilter too
 		child->setAttribute(Qt::WA_DeleteOnClose);
-		connect(child,SIGNAL(destroyed(QObject*)),this,SLOT(mdiDestroyed(QObject*)));
+		//connect(child,SIGNAL(destroyed(QObject*)),this,SLOT(mdiDestroyed(QObject*)));
 		QMdiSubWindow* sub = mdiArea->addSubWindow(child);
 		mdiArea->setActiveSubWindow( sub );
 		child->show();
@@ -143,7 +143,7 @@ MainWindow::on_actionClose_triggered ()
 void MainWindow::closeEvent(QCloseEvent* e)
 {
 	QString fileName;
-	if ( modified )
+	if ( modified && ! filterPool.empty() )
 	{
 		QMessageBox msgBox;
 		msgBox.setText(tr("Filter pool has been modified!"));
@@ -196,10 +196,7 @@ void MainWindow::open_configuration(const QList<GenericFilter>& filters, MDIChil
 	
 	model->setType(DOCUMENT);
 
-	connect(model, SIGNAL(addFilter(GenericFilter)), this, SLOT(addFilter2Current(GenericFilter)));
-	connect(model, SIGNAL(deleteFilter(GenericFilter)), this, SLOT(deleteFilter(GenericFilter)));
-
-	QDialog* filter = new FilterConfig(model, this);
+	FilterConfig* filter = new FilterConfig(model, this);
 
 	connect(model, SIGNAL(newFilters(const QList<GenericFilter>&)), child, SLOT(updateAllFilters(const QList<GenericFilter>&)));
 	filter->show();
