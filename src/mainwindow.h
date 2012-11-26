@@ -81,6 +81,7 @@ private slots:
 
 	void finderWrapper(const QString& str,  QTextDocument::FindFlags flags);
 	void finderWrapper(const QRegExp& str,  QTextDocument::FindFlags flags);
+	void updateFilterPool(QList<GenericFilter> filters);
 protected:
 	void changeEvent(QEvent *e);
 	void closeEvent(QCloseEvent* e);

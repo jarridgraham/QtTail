@@ -53,9 +53,9 @@ public:
 	QAbstractItemModel* model() const { return Model; }
 	virtual ~FilterConfig () { }
 signals:
-	void newFilters(QList<GenericFilter> filters);
 	void deleteFilter(GenericFilter filter);
 	void addFilter(GenericFilter filter);
+	void newFilters(QList<GenericFilter> filters);
 };
 
 #endif // FILTERCONFIG_H

@@ -45,6 +45,9 @@ FilterModel::setData (const GenericFilter & filter)
 QVariant
 FilterModel::data (const QModelIndex & index, int role) const
 {
+	if ( role == TypeRole )
+		return type;
+
 	if ( !index.isValid() )
 		return QVariant();
 
@@ -73,6 +76,7 @@ FilterModel::data (const QModelIndex & index, int role) const
 	{
 		return rawData.at(index.row());
 	}
+
 	return QVariant();
 }
 
@@ -93,8 +97,12 @@ bool
 FilterModel::setData (const QModelIndex & index, const QVariant & value,
 		      int role)
 {
-	if ( type == GLOBAL )
-		return false;
+	if ( index.isValid() && role == Qt::UserRole )
+	{
+		rawData[(index.row())] = value.value<GenericFilter>();
+		emit dataChanged( index, index  );
+		return true;
+	}
 	if ( index.isValid() && role == Qt::EditRole && index.column() == PRIO )
 	{
 		bool ok = false;
@@ -217,9 +225,7 @@ FilterModel::~FilterModel()
 
 bool FilterModel::submit()
 {
-	if ( type == DOCUMENT )
-		emit newFilters(rawData);
-
+	emit newFilters(rawData);
 	return true;
 }
 

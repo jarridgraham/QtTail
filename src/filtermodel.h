@@ -28,6 +28,7 @@
 #include "genericfilter.h"
 
 enum FilterConfigType { DOCUMENT = 0, GLOBAL = 1 };
+const int TypeRole = Qt::UserRole+1;
 
 class FilterModel:public QAbstractTableModel
 {

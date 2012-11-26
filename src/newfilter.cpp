@@ -78,6 +78,8 @@ NewFilter::NewFilter (QWidget * parent, GenericFilter filter_, int defaultFontWe
 
 	if ( ! filter_.isSuppressor() )
 		setFormat ( filter_.getFormat() );
+	else 
+		ui.groupBoxHighlight->setEnabled ( false );
 }
 
 void
@@ -135,20 +137,6 @@ NewFilter::changeEvent (QEvent * e)
 	}
 }
 
-// QPair < GenericFilter, Format*> NewFilter::getFilterAndFormat () const
-// {
-// 	GenericFilter filter = getFilter();
-// 
-// 	Format* format;
-// 	
-// 	if ( !filter.isSuppressor() )
-// 	{
-// 		format = getFormat();
-// 	}
-// 
-// 	return QPair<GenericFilter, Format*>(filter, format);
-// }
-
 GenericFilter
 NewFilter::getFilter () const
 {
@@ -181,11 +169,7 @@ QString NewFilter::getName() const
 
 QString NewFilter::getColorString(const QColor& color) const
 {
-	QString retVal("#%1%2%3");
-	retVal.arg(color.red(),2,10).arg(color.green(),2,10).arg(color.blue(),2,10);
-
-	qDebug() << "retVal: " << retVal;
-	return retVal;
+	return QString("#%1%2%3").arg(color.red(),2,16,QChar('0')).arg(color.green(),2,16,QChar('0')).arg(color.blue(),2,16,QChar('0')).toUpper();
 }
 
 void NewFilter::setFilter(const GenericFilter& filter )
@@ -219,10 +203,8 @@ void NewFilter::setFormat(const Format* format)
 		ui.checkBoxBold->setChecked( format->bold() );
 	if ( format->isItalicSet() )
 		ui.checkBoxItalic->setChecked( format->italic() );
-	
 	if ( format->isBackgroundSet() )
 		ui.lineEditBackgroundColor->setText( getColorString( format->background() ) );
-
 	if ( format->isForegroundSet() )
 		ui.lineEditColor->setText ( getColorString( format->foreground() ) );
 }

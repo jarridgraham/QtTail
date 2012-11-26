@@ -51,7 +51,7 @@ public:
 	void setPriority(int prio) { priority= prio; }
 	int getPriority() const { return priority; }
 	QString getName() const { return name_; }
-	bool isRegExp() const { return filterReg.isValid(); }
+	bool isRegExp() const { return ! filterReg.isEmpty(); }
 	bool isMatch() const { return ! filterString.isEmpty(); }
 	void setString(QString filter) { filterString = filter; filterReg = QRegExp(); }
 	void setString(QRegExp filter) { filterReg = filter; filterString.clear(); }

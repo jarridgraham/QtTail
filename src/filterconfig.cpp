@@ -60,7 +60,8 @@ FilterConfig::contextMenuEvent (QContextMenuEvent *event)
 	}
 
 	QMenu contextual(this);
-	contextual.addAction(add2current);
+	if ( Model->data(QModelIndex(), TypeRole) == GLOBAL )
+		contextual.addAction(add2current);
 	contextual.addAction(delthis);
 	if ( edit != NULL ) contextual.addAction(edit);
 
@@ -88,7 +89,9 @@ void FilterConfig::updateFilter()
 {
 	GenericFilter filter = editWindow->getFilter();
 
-	Model->setData ( bookmark, filter );
+	filter.setPriority( bookmark.row() );
+
+	Model->setData ( bookmark, filter, Qt::UserRole );
 }
 
 void
@@ -96,10 +99,9 @@ FilterConfig::deleteMultipleRows ( const QModelIndexList& list )
 {
 	foreach ( QModelIndex item, list )
 	{
-// 		GenericFilter filter = item.data(item, Qt::UserRole).value<GenericFilter>();
 		GenericFilter filter = Model->data(item, Qt::UserRole).value<GenericFilter>();
 		Model->removeRow( item.row() );
-		emit deleteFilter( filter );
+		emit deleteFilter ( filter );
 	}
 }
 
@@ -108,9 +110,8 @@ FilterConfig::addMultipleRows ( const QModelIndexList& list )
 {
 	foreach ( QModelIndex item, list )
 	{
-// 		GenericFilter filter = item.data(item, Qt::UserRole).value<GenericFilter>();
 		GenericFilter filter = Model->data(item, Qt::UserRole).value<GenericFilter>();
-		emit addFilter(filter);
+		emit addFilter ( filter );
 	}
 }
 

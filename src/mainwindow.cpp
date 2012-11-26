@@ -199,6 +199,8 @@ void MainWindow::open_configuration(const QList<GenericFilter>& filters, MDIChil
 	FilterConfig* filter = new FilterConfig(model, this);
 
 	connect(model, SIGNAL(newFilters(const QList<GenericFilter>&)), child, SLOT(updateAllFilters(const QList<GenericFilter>&)));
+	connect(model, SIGNAL(addFilter(GenericFilter)), child, SLOT(addFilter(GenericFilter)));
+	connect(model, SIGNAL(deleteFilter(GenericFilter)), child, SLOT(addFilter(GenericFilter)));
 	filter->show();
 }
 
@@ -348,10 +350,17 @@ MainWindow::on_actionFilter_pool_triggered ()
 	
 	QDialog* filter = new FilterConfig(model, this);
 
-	connect ( filter, SIGNAL(addFilter(const GenericFilter&)), this, SLOT(addHighlightFilter(const GenericFilter&)));
+	connect(model,SIGNAL(newFilters(QList<GenericFilter>)),this,SLOT(updateFilterPool(QList<GenericFilter>)));
 	
 	filter->show();	
 }
+
+void MainWindow::updateFilterPool(QList< GenericFilter > filters)
+{
+	modified = true;
+	filterPool = filters;
+}
+
 
 QString MainWindow::getFilename()
 {
