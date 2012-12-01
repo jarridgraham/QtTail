@@ -199,8 +199,8 @@ void MainWindow::open_configuration(const QList<GenericFilter>& filters, MDIChil
 	FilterConfig* filter = new FilterConfig(model, this);
 
 	connect(model, SIGNAL(newFilters(const QList<GenericFilter>&)), child, SLOT(updateAllFilters(const QList<GenericFilter>&)));
-	connect(model, SIGNAL(addFilter(GenericFilter)), child, SLOT(addFilter(GenericFilter)));
-	connect(model, SIGNAL(deleteFilter(GenericFilter)), child, SLOT(addFilter(GenericFilter)));
+	connect(filter, SIGNAL(addFilter(GenericFilter)), child, SLOT(addFilter(GenericFilter)));
+	connect(filter, SIGNAL(deleteFilter(GenericFilter)), child, SLOT(removeFilter(GenericFilter)));
 	filter->show();
 }
 
@@ -351,6 +351,14 @@ MainWindow::on_actionFilter_pool_triggered ()
 	QDialog* filter = new FilterConfig(model, this);
 
 	connect(model,SIGNAL(newFilters(QList<GenericFilter>)),this,SLOT(updateFilterPool(QList<GenericFilter>)));
+
+	MDIChild* child = getTopMDIChild();
+
+	if ( child != NULL )
+	{
+		connect(filter, SIGNAL(addFilter(GenericFilter)), child, SLOT(addFilter(GenericFilter)));
+		connect(filter, SIGNAL(deleteFilter(GenericFilter)), child, SLOT(removeFilter(GenericFilter)));
+	}
 	
 	filter->show();	
 }

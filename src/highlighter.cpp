@@ -36,16 +36,12 @@ Highlighter::highlightBlock (const QString & text)
 		return;
 	
 	qDebug() << "highlightBlock count: " << filters->count() << "text: " << text;
-	// We need a logic for strings that match multiple filter
+
 	foreach (GenericFilter g, filters->keys() )
 	{
 		qDebug() << "Text: " << text << " g: " << g.getString(); 
 		if ( ! g.isSuppressor() && g.match(text) )
 		{
-// 			qDebug() << "red: " << filters->value(g).foreground().color().red();
-// 			qDebug() << "blue: " << filters->value(g).foreground().color().blue();
-// 			qDebug() << "green: " << filters->value(g).foreground().color().green();
-			//qDebug() << "Value " << qobject_cast<QTextCharFormat> ( filters->value(g) ).
 			setFormat(0, text.length(), filters->value(g) );
 			break;
 		}

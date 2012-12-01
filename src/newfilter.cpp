@@ -31,15 +31,13 @@ NewFilter::NewFilter (QWidget * parent, int defaultFontWeight):QDialog (parent),
 	ui.lineFilter->setValidator( new FilterValidator(MATCH, this)  );
 	
 	int n = -1;
-	QStringList fontSizes;
 	for ( int i = 8; i < 64; i+=4)
 	{
-		fontSizes.append( QString::number(i));
+		QString item = QString::number(i);
+ 		ui.fontSizeComboBox->addItem(item, static_cast<double>(i));
 		if ( i <= defaultFontWeight ) ++n;
-			
 	}
-	
-	ui.fontSizeComboBox->insertItems(0, fontSizes);
+
 	
 	if ( defaultFontWeight > 0 && n >= 0 )
 	{
@@ -58,15 +56,12 @@ NewFilter::NewFilter (QWidget * parent, GenericFilter filter_, int defaultFontWe
 	ui.lineFilter->setValidator( new FilterValidator(MATCH, this)  );
 
 	int n = -1;
-	QStringList fontSizes;
 	for ( int i = 8; i < 64; i+=4)
 	{
-		fontSizes.append( QString::number(i));
+		QString item = QString::number(i);
+ 		ui.fontSizeComboBox->addItem(item, QVariant(static_cast<double>(i)));
 		if ( i <= defaultFontWeight ) ++n;
-
 	}
-
-	ui.fontSizeComboBox->insertItems(0, fontSizes);
 
 	if ( defaultFontWeight > 0 && n >= 0 )
 	{
@@ -193,8 +188,6 @@ void NewFilter::setFilter(const GenericFilter& filter )
 		ui.comboBoxMatch->setCurrentIndex( 1 );
 }
 
-
-
 void NewFilter::setFormat(const Format* format)
 {
 	if ( format->isFontSet() )
@@ -207,6 +200,12 @@ void NewFilter::setFormat(const Format* format)
 		ui.lineEditBackgroundColor->setText( getColorString( format->background() ) );
 	if ( format->isForegroundSet() )
 		ui.lineEditColor->setText ( getColorString( format->foreground() ) );
+	if ( format->isPointsSet() )
+	{
+		int index = ui.fontSizeComboBox->findData( QVariant( format->points() ));
+		if ( index < 0 ) index = 0;
+		ui.fontSizeComboBox->setCurrentIndex(index);
+	}
 }
 
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>516</width>
-    <height>340</height>
+    <width>444</width>
+    <height>324</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,244 +16,261 @@
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>320</x>
-     <y>300</y>
-     <width>181</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
-  <widget class="QGroupBox" name="groupBoxHighlight">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>110</y>
-     <width>511</width>
-     <height>191</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Highlight</string>
-   </property>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>30</y>
-      <width>498</width>
-      <height>127</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="gridLayout_2">
-     <item row="0" column="0">
-      <widget class="QLabel" name="labelFont">
-       <property name="text">
-        <string>Font:</string>
-       </property>
-       <property name="buddy">
-        <cstring>fontComboBox</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QFontComboBox" name="fontComboBox"/>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="labelFontSize">
-       <property name="text">
-        <string>Font Size: </string>
-       </property>
-       <property name="buddy">
-        <cstring>fontSizeComboBox</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QComboBox" name="fontSizeComboBox"/>
-     </item>
-     <item row="2" column="1" rowspan="2">
-      <widget class="QLineEdit" name="lineEditColor">
-       <property name="text">
-        <string>#FF0000</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="labelColor">
-       <property name="text">
-        <string>Color:</string>
-       </property>
-       <property name="buddy">
-        <cstring>lineEditColor</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="labelBackgroundColor">
-       <property name="text">
-        <string>Background Color:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QLineEdit" name="lineEditBackgroundColor">
-       <property name="text">
-        <string>#FFFFFF</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>160</y>
-      <width>161</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QCheckBox" name="checkBoxBold">
-       <property name="layoutDirection">
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="text">
-        <string>Bold</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkBoxItalic">
-       <property name="layoutDirection">
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="text">
-        <string>Italic</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>20</y>
-     <width>493</width>
-     <height>95</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QLabel" name="labelName">
-      <property name="text">
-       <string>Name:</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-      </property>
-      <property name="buddy">
-       <cstring>lineEditName</cstring>
-      </property>
+  <layout class="QGridLayout" name="gridLayout_4">
+   <item row="0" column="0">
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="labelName">
+         <property name="text">
+          <string>Name:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy">
+          <cstring>lineEditName</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="4">
+        <widget class="QLineEdit" name="lineEditName"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="labelFilter">
+         <property name="text">
+          <string>Filter string:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy">
+          <cstring>lineFilter</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="labelFilterType">
+         <property name="text">
+          <string>Filter Type:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy">
+          <cstring>comboBoxFilter</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="comboBoxFilter">
+         <item>
+          <property name="text">
+           <string>Highlight</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Suppress</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLabel" name="labelMatchType">
+         <property name="text">
+          <string>Match Type:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy">
+          <cstring>comboBoxMatch</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QComboBox" name="comboBoxMatch">
+         <item>
+          <property name="text">
+           <string>Match</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>RegExp</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="1" colspan="4">
+        <widget class="QLineEdit" name="lineFilter"/>
+       </item>
+      </layout>
      </widget>
-    </item>
-    <item row="0" column="1" colspan="4">
-     <widget class="QLineEdit" name="lineEditName"/>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="labelFilter">
-      <property name="text">
-       <string>Filter string:</string>
+     <widget class="QGroupBox" name="groupBoxHighlight">
+      <property name="title">
+       <string>Highlight</string>
       </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-      </property>
-      <property name="buddy">
-       <cstring>lineFilter</cstring>
-      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="1">
+            <widget class="QFontComboBox" name="fontComboBox"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="labelFontSize">
+             <property name="text">
+              <string>Font Size: </string>
+             </property>
+             <property name="buddy">
+              <cstring>fontSizeComboBox</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLineEdit" name="lineEditBackgroundColor">
+             <property name="text">
+              <string>#FFFFFF</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="labelBackgroundColor">
+             <property name="text">
+              <string>Background Color:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QComboBox" name="fontSizeComboBox"/>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="labelFont">
+             <property name="text">
+              <string>Font:</string>
+             </property>
+             <property name="buddy">
+              <cstring>fontComboBox</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="lineEditColor">
+             <property name="text">
+              <string>#FF0000</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="labelColor">
+             <property name="text">
+              <string>Color:</string>
+             </property>
+             <property name="buddy">
+              <cstring>lineEditColor</cstring>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxBold">
+             <property name="layoutDirection">
+              <enum>Qt::RightToLeft</enum>
+             </property>
+             <property name="text">
+              <string>Bold</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxItalic">
+             <property name="layoutDirection">
+              <enum>Qt::RightToLeft</enum>
+             </property>
+             <property name="text">
+              <string>Italic</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="labelFilterType">
-      <property name="text">
-       <string>Filter Type:</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-      </property>
-      <property name="buddy">
-       <cstring>comboBoxFilter</cstring>
-      </property>
+     <widget class="QWidget" name="">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QDialogButtonBox" name="buttonBox">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QComboBox" name="comboBoxFilter">
-      <item>
-       <property name="text">
-        <string>Highlight</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Suppress</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="2" column="2">
-     <widget class="QLabel" name="labelMatchType">
-      <property name="text">
-       <string>Match Type:</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-      <property name="buddy">
-       <cstring>comboBoxMatch</cstring>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="3">
-     <widget class="QComboBox" name="comboBoxMatch">
-      <item>
-       <property name="text">
-        <string>Match</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>RegExp</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="1" column="1" colspan="4">
-     <widget class="QLineEdit" name="lineFilter"/>
-    </item>
-   </layout>
-  </widget>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <tabstops>
-  <tabstop>buttonBox</tabstop>
   <tabstop>lineEditName</tabstop>
   <tabstop>lineFilter</tabstop>
   <tabstop>comboBoxFilter</tabstop>
   <tabstop>comboBoxMatch</tabstop>
-  <tabstop>fontComboBox</tabstop>
   <tabstop>fontSizeComboBox</tabstop>
-  <tabstop>lineEditColor</tabstop>
   <tabstop>checkBoxBold</tabstop>
   <tabstop>checkBoxItalic</tabstop>
  </tabstops>
