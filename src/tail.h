@@ -31,6 +31,7 @@ class Tail: public QThread
 	Q_OBJECT
 	
 	bool abort;
+	int counter;
 	QMutex mutex;
 	
 	QFile in;
@@ -38,6 +39,7 @@ class Tail: public QThread
 	bool valid;
 	QString _error;
 	QWaitCondition waiter;
+	QTimer* timer;
 
 	void goToPosition();
 
@@ -47,7 +49,7 @@ signals:
 	
 private slots:
 	void checkLine();
-
+	void resetCounter();
 public slots:
 	void stopProcess();
 

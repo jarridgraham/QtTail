@@ -23,16 +23,22 @@
 #include <QTextStream>
 #include <QStringList>
 #include <QMutexLocker>
+#include <QScopedPointer>
 #include <QDebug>
 
-Tail::Tail (QString fileName, QObject* parent): QThread(parent), abort(false), in(fileName), valid(true)
+Tail::Tail (QString fileName, QObject* parent): QThread(parent), abort(false), counter(0),in(fileName), valid(true)
 {
 	if ( !in.open(QFile::ReadOnly | QFile::Text) )
 	{
 		valid = false;
 	}
-	qDebug() << "Tail instantiated!" << currentThreadId();
-
+	else
+	{
+		QScopedPointer<QTimer> tTimer( new QTimer() );
+		connect(tTimer.data(),SIGNAL(timeout()),this,SLOT(resetCounter()));
+		timer = tTimer.take();
+		qDebug() << "Tail created!";
+	}
 }
 
 Tail::~Tail ()
@@ -42,7 +48,15 @@ Tail::~Tail ()
 	waiter.wakeOne();
 	wait();
 	qDebug() << "~Tail";
+	delete timer;
 }
+
+void
+Tail::resetCounter ()
+{
+	counter = 0;
+}
+
 
 void Tail::stopProcess()
 {
@@ -89,18 +103,31 @@ Tail::run ()
 	QMutexLocker lock(&mutex);
 	forever 
 	{
-		qDebug() << "Reading 1 line of text" << currentThreadId();
+// 		qDebug() << "Reading 1 line of text" << currentThreadId();
 		waiter.wait(&mutex, 1500);
 		if (abort)
 			return;
-		//line = in.readLine();
+
+		if ( timer->isActive() == false )
+			timer->start(1000);
+		
 		while ( ! in.atEnd() )
 		{	
 			line = in.read(1024);
-			qDebug() << "Error? " << in.errorString();
-			qDebug() << "Sending line " << line;
+			if ( counter >= 1000 )
+				continue;
+			
+// 			qDebug() << "Error? " << in.errorString();
+// 			qDebug() << "Sending line " << line;
 			if ( line.length() > 0 )
 				emit sendLine(line);
+
+			++counter;
+			if ( counter ==  1000 )
+			{
+				//qDebug() << "Too many lines... skipping.";
+				emit sendLine(tr("...\nToo fast... skipping!\n"));
+			}
 		}
 	}
 }

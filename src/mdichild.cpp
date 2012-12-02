@@ -91,6 +91,7 @@ void MDIChild::receiveLine (QString line)
 	GoToPos();
 
 	if ( ! toBeSuppressed( line ) )
+		//append( line );
 		textCursor().insertText(line);
 	
 	setTextCursor( position );
@@ -102,12 +103,10 @@ QTextCharFormat MDIChild::setNewFormat(const Format& format)
 	
 	if ( format.isBackgroundSet() )
 	{
-		qDebug() << "Background ok";
 		newFormat.setBackground( format.backgroundBrush() );
 	}
 	if ( format.isForegroundSet() )
 	{
-		qDebug() << "Foreground ok";
 		newFormat.setForeground( format.foregroundBrush() );
 	}
 	if ( format.isBoldSet() && format.bold() )

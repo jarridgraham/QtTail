@@ -35,11 +35,11 @@ Highlighter::highlightBlock (const QString & text)
 	if ( text.isEmpty() ) 
 		return;
 	
-	qDebug() << "highlightBlock count: " << filters->count() << "text: " << text;
+// 	qDebug() << "highlightBlock count: " << filters->count() << "text: " << text;
 
 	foreach (GenericFilter g, filters->keys() )
 	{
-		qDebug() << "Text: " << text << " g: " << g.getString(); 
+// 		qDebug() << "Text: " << text << " g: " << g.getString(); 
 		if ( ! g.isSuppressor() && g.match(text) )
 		{
 			setFormat(0, text.length(), filters->value(g) );
