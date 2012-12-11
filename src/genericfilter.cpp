@@ -35,7 +35,7 @@ GenericFilter::match (const QString & s) const
 	}
 	if ( ! filterReg.isEmpty() )
 	{
-		qDebug() << "regexp string";
+		qDebug() << "regexp string:" << filterReg.pattern() << " s: " << s;
 		if ( filterReg.indexIn( s ) != -1 )
 		{
 			qDebug() << "regexp matched";
