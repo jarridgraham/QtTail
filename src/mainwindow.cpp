@@ -32,7 +32,7 @@
 
 #include <QDebug>
 
-MainWindow::MainWindow ():QMainWindow (0), modified(false), findwindow(NULL)
+MainWindow::MainWindow ():QMainWindow (0), modified(false), findwindow(NULL), separator(NULL)
 {
 	setupUi(this);
 	Ui_MainWindow::statusBar->showMessage(tr("Going"), 1000);
@@ -97,11 +97,29 @@ MainWindow::saveFilterPool (QString namefile)
 	modified = true;
 }
 
+void
+MainWindow::InsertIntoMenu (const QString & fileName, MDIChild* child )
+{
+	QFileInfo file(fileName);
+
+	QString basename = file.fileName();
+	
+	QAction* nMenu = new QAction(basename,this);
+	if ( separator == NULL )
+		separator = Ui::MainWindow::menuWindow->addSeparator();
+	Ui::MainWindow::menuWindow->addAction( nMenu );
+
+	connect(nMenu, SIGNAL(triggered()), child, SLOT(setFocus()));
+
+	child->setMenu ( nMenu );
+}
 
 MDIChild *MainWindow::createMDIChild(const QString& fileName)
 {
 	MDIChild *child = new MDIChild(fileName);
 
+	if ( child == NULL ) return child;
+	
 	if ( child->isValid() )
 	{
 
@@ -112,8 +130,11 @@ MDIChild *MainWindow::createMDIChild(const QString& fileName)
 		mdiArea->setActiveSubWindow( sub );
 		child->show();
 
+		InsertIntoMenu( fileName, child );
+		
 		return child;
 	}
+	delete child;
 	return NULL;
 }
 
@@ -137,7 +158,19 @@ MainWindow::on_actionOpen_triggered ()
 void
 MainWindow::on_actionClose_triggered ()
 {
-	mdiArea->currentSubWindow()->close();
+	QMdiSubWindow* sub = mdiArea->currentSubWindow();
+	MDIChild* current = qobject_cast<MDIChild*> (  sub->widget() );
+
+	Ui::MainWindow::menuWindow->removeAction ( current->getMenu() );
+	current->getMenu()->deleteLater();
+	sub->close();
+
+	if (  mdiArea->currentSubWindow() == NULL )
+	{
+		Ui::MainWindow::menuWindow->removeAction ( separator );
+		separator->deleteLater();
+		separator = NULL;
+	}
 }
 
 void MainWindow::closeEvent(QCloseEvent* e)

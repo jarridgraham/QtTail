@@ -43,10 +43,7 @@ Tail::Tail (QString fileName, QObject* parent): QThread(parent), abort(false), c
 
 Tail::~Tail ()
 {
-	QMutexLocker lock(&mutex);
-	abort = true;
-	waiter.wakeOne();
-	wait();
+	stopProcess();
 	qDebug() << "~Tail";
 	delete timer;
 }
@@ -62,7 +59,8 @@ void Tail::stopProcess()
 {
 	QMutexLocker lock(&mutex);
 	abort = true;
-	waiter.wakeOne();
+	waiter.wakeAll();
+	lock.unlock();
 	wait();
 }
 
@@ -116,6 +114,9 @@ Tail::run ()
 			line = in.read(1024);
 			if ( counter >= 1000 )
 				continue;
+
+			if (abort)
+				return;
 			
 // 			qDebug() << "Error? " << in.errorString();
 // 			qDebug() << "Sending line " << line;

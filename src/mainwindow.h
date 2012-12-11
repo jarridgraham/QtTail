@@ -37,7 +37,8 @@ class MainWindow: public QMainWindow, private Ui::MainWindow
 	NewFilter* newfilter;
 	QList<GenericFilter> filterPool;
 	bool modified;
-	QDialog* findwindow; 
+	QDialog* findwindow;
+	QAction* separator;
 	
 	struct
 	{
@@ -54,6 +55,7 @@ class MainWindow: public QMainWindow, private Ui::MainWindow
 
 	void loadFilterPool(QString namefile);
 	void saveFilterPool(QString namefile);
+	void InsertIntoMenu(const QString& fileName, MDIChild* child );
 	MDIChild* createMDIChild(const QString& fileName);
 	QMdiSubWindow* findMDIChild(const QString &fileName);
 	MDIChild* getTopMDIChild();

@@ -46,6 +46,8 @@ NewFilter::NewFilter (QWidget * parent, int defaultFontWeight):QDialog (parent),
 	}
 	
 	setConnections();
+
+	fgDialog = bgDialog = NULL;
 }
 
 NewFilter::NewFilter (QWidget * parent, GenericFilter filter_, int defaultFontWeight):
@@ -75,6 +77,8 @@ NewFilter::NewFilter (QWidget * parent, GenericFilter filter_, int defaultFontWe
 		setFormat ( filter_.getFormat() );
 	else 
 		ui.groupBoxHighlight->setEnabled ( false );
+
+	fgDialog = bgDialog = NULL;
 }
 
 void
@@ -84,6 +88,53 @@ NewFilter::setConnections ()
 	connect(ui.comboBoxMatch, SIGNAL(currentIndexChanged(int)),this, SLOT(changeFilterMatch(int)));
 	connect(this, SIGNAL(typeChanged(filterType)),ui.lineFilter->validator(),SLOT(changeState(filterType)));
 }
+
+void
+NewFilter::on_pbColorFG_clicked ()
+{
+	QColor foreground = colorParse( ui.lineEditColor->text() );
+
+	if ( fgDialog == NULL )
+		fgDialog = new QColorDialog( foreground, this );
+
+	connect(fgDialog,SIGNAL(colorSelected(const QColor&)),this,SLOT(fgColor(const QColor&)));
+	fgDialog->show();
+}
+
+void
+NewFilter::fgColor (const QColor& foreground)
+{
+// 	QColor foreground = fgDialog->selectedColor();
+	fgDialog->deleteLater();
+	fgDialog = NULL;
+
+	ui.lineEditColor->setText ( getColorString( foreground ) );
+}
+
+
+void
+NewFilter::bgColor (const QColor& background)
+{
+	//QColor background = bgDialog->selectedColor();
+	bgDialog->deleteLater();
+	bgDialog = NULL;
+
+	ui.lineEditBackgroundColor->setText( getColorString( background ) );
+}
+
+
+void
+NewFilter::on_pbColorBG_clicked ()
+{
+	QColor background = colorParse( ui.lineEditBackgroundColor->text() );
+
+	if ( bgDialog == NULL )
+		bgDialog = new QColorDialog( background, this );
+
+	connect(bgDialog,SIGNAL(colorSelected(const QColor&)),this,SLOT(bgColor(const QColor&)));
+	bgDialog->show();
+}
+
 
 void
 NewFilter::changeFilterType (int type)
@@ -242,8 +293,8 @@ QColor NewFilter::colorParse(QString col) const
 	b = col.mid(5,2).toInt(0, 16);
 
 	QColor ret(r,g,b);
-	qDebug() << "color: " << ret << " r: " << r << " g: " << g << " b: " << b;
-	qDebug() << ret.red() << " - " << ret.green() << " - " << ret.blue();
+// 	qDebug() << "color: " << ret << " r: " << r << " g: " << g << " b: " << b;
+// 	qDebug() << ret.red() << " - " << ret.green() << " - " << ret.blue();
 	return ret;
 }
 

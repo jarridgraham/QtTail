@@ -22,6 +22,7 @@
 
 #include <QDialog>
 #include <QPair>
+#include <QColorDialog>
 #include "ui_filters.h"
 #include "genericfilter.h"
 #include "filtervalidator.h"
@@ -32,6 +33,9 @@ class NewFilter:public QDialog
 	Q_OBJECT
 	
 	Ui::NewFilterDialog ui;
+
+	QColorDialog* fgDialog;
+	QColorDialog* bgDialog;
 
 	bool suppressor;
 
@@ -46,6 +50,10 @@ class NewFilter:public QDialog
 private slots:
 	void changeFilterType(int type);
 	void changeFilterMatch(int type);
+	void fgColor(const QColor&);
+	void bgColor(const QColor&);
+	void on_pbColorBG_clicked();
+	void on_pbColorFG_clicked();
 protected:
 	void changeEvent(QEvent *e);
 public:

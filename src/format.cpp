@@ -23,7 +23,7 @@ Format::Format (QTextCharFormat tcf, QObject* parent):QObject (parent)
 {
 	setBackground( tcf.background().color() );
 	setForeground( tcf.foreground().color() );
-	setBold( tcf.fontWeight() == QFont::Bold );
+	setBold( tcf.fontWeight() >= QFont::Bold );
 	setItalic( tcf.fontItalic() );
 	setPoints ( tcf.fontPointSize() );
 }

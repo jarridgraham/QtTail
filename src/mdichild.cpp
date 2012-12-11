@@ -26,7 +26,7 @@ MDIChild::closeEvent (QCloseEvent * event)
 {
 }
 
-MDIChild::MDIChild(const QString& fileName, int default_point_size): curFile(fileName)
+MDIChild::MDIChild(const QString& fileName, int default_point_size): curFile(fileName), menu(NULL)
 {
 	GoToPos();
 	
@@ -102,27 +102,23 @@ QTextCharFormat MDIChild::setNewFormat(const Format& format)
 	QTextCharFormat newFormat = currentCharFormat();
 	
 	if ( format.isBackgroundSet() )
-	{
 		newFormat.setBackground( format.backgroundBrush() );
-	}
+
 	if ( format.isForegroundSet() )
-	{
 		newFormat.setForeground( format.foregroundBrush() );
-	}
-	if ( format.isBoldSet() && format.bold() )
-		newFormat.setFontWeight( QFont::Bold );
-	else
-		newFormat.setFontWeight( QFont::Normal );
-	
-	if ( format.isItalicSet() )
-		newFormat.setFontItalic ( format.italic() );
 	
 	if ( format.isFontSet() )
 		newFormat.setFont( format.font() );
 	if ( format.isPointsSet() )
 		newFormat.setFontPointSize( format.points() );
-	
-	qDebug() << "Fore: " << newFormat.foreground() << " Back: " << newFormat.background();
+
+	if ( format.isBoldSet() && format.bold() )
+		newFormat.setFontWeight( QFont::Bold );
+	else
+		newFormat.setFontWeight( QFont::Normal );
+
+	if ( format.isItalicSet() )
+		newFormat.setFontItalic ( format.italic() );
 	
 	return newFormat;
 }

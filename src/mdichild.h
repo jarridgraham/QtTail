@@ -36,6 +36,7 @@ class MDIChild: public QTextEdit
 	Tail* worker;
 	QMap<GenericFilter, QTextCharFormat> filters;
 	Highlighter* highlighter;
+	QAction* menu;
 	
 	void GoToPos(int position = -1);
 	QTextCharFormat setNewFormat(const Format& format);
@@ -55,6 +56,8 @@ public:
 
 	bool isValid() const;
 	QString currentFile() const { return curFile; }
+	QAction* getMenu() const { return menu; }
+	void setMenu(QAction* m) { menu = m; }
 
 public slots:
 	bool addFilter(GenericFilter filter);
