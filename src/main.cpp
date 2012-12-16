@@ -17,6 +17,7 @@
 */
 
 #include <QApplication>
+#include <QTranslator>
 #include "mainwindow.h"
 
 int 
@@ -27,6 +28,12 @@ main (int argc, char **argv)
 	app.setOrganizationDomain("praisenet.darktech.org");
 	app.setOrganizationName("Praise");
 	app.setApplicationName("QtTail");
+
+	QString locale = QLocale::system().name();
+
+	QTranslator translator;
+	translator.load(QString("qttail_") + locale);
+	app.installTranslator(&translator);
 
 	MainWindow w;
 	w.show();

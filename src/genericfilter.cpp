@@ -144,11 +144,5 @@ GenericFilter& GenericFilter::operator=(const GenericFilter& other)
 GenericFilter::GenericFilter(const GenericFilter& other)
 {
 	assignment(other);
-
-// 	qDebug() << "Reg:" << filterReg;
-// 	qDebug() << "String:" << filterString;
-// 	qDebug() << "prio" << priority;
-// 	qDebug() << "name" << name_;
-// 	qDebug() << "format" << format;
 }
 

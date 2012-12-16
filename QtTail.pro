@@ -9,6 +9,8 @@ TARGET =
 DEPENDPATH += . src
 INCLUDEPATH += . src
 
+DESTDIR += .
+
 # Input
 HEADERS += src/filterconfig.h \
            src/filtermodel.h \
@@ -35,3 +37,15 @@ SOURCES += src/filterconfig.cpp \
            src/newfilter.cpp \
            src/tail.cpp \
            src/findwindow.cpp
+TRANSLATIONS = translation/qttail_it.ts
+
+update.commands = lupdate QtTail.pro
+update.depends = $$SOURCES $$HEADERS $$FORMS $$TRANSLATIONS
+release.commands = lrelease QtTail.pro
+release.depends = update
+translate.commands = $(COPY) translation/*.qm .
+translate.depends = release
+
+QMAKE_EXTRA_TARGETS += update release translate
+
+PRE_TARGETDEPS += translate
