@@ -225,99 +225,104 @@ p, li { white-space: pre-wrap; }
         <translation>Finestre</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="78"/>
+        <location filename="../src/mainwindow.ui" line="79"/>
         <source>&amp;Quit</source>
         <translation>&amp;Esci</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="81"/>
+        <location filename="../src/mainwindow.ui" line="82"/>
         <source>Ctrl+Q</source>
         <translation>Ctrl+Q</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="86"/>
+        <location filename="../src/mainwindow.ui" line="87"/>
         <source>&amp;Open</source>
         <translation>&amp;Apri</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="91"/>
+        <location filename="../src/mainwindow.ui" line="92"/>
         <source>&amp;Close</source>
         <translation>&amp;Chiudi</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="96"/>
+        <location filename="../src/mainwindow.ui" line="97"/>
         <source>&amp;Save output</source>
         <translation>&amp;Salva uscita</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="101"/>
+        <location filename="../src/mainwindow.ui" line="102"/>
         <source>Highlight</source>
         <translation>Evidenzia</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="106"/>
+        <location filename="../src/mainwindow.ui" line="107"/>
         <source>Suppress</source>
         <translation>Sopprimi</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="111"/>
+        <location filename="../src/mainwindow.ui" line="112"/>
         <source>QTa&amp;il</source>
         <translation>QTa&amp;il</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="116"/>
+        <location filename="../src/mainwindow.ui" line="117"/>
         <source>Filter &amp;configuration</source>
         <translation>C&amp;onfigurazione Filtri</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="121"/>
+        <location filename="../src/mainwindow.ui" line="122"/>
         <source>&amp;New filter</source>
         <translation>&amp;Nuovo filtro</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="126"/>
+        <location filename="../src/mainwindow.ui" line="127"/>
         <source>Reset suppressor</source>
         <translation>Reset dei soppressori</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="131"/>
+        <location filename="../src/mainwindow.ui" line="132"/>
         <source>&amp;Reset filter</source>
         <translation>&amp;Reset dei filri</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="136"/>
+        <location filename="../src/mainwindow.ui" line="137"/>
         <source>Filter &amp;pool</source>
         <translation>&amp;Archivio filtri</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="141"/>
+        <location filename="../src/mainwindow.ui" line="142"/>
         <source>O&amp;pen Filters</source>
         <translation>A&amp;pri Filtri</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="146"/>
+        <location filename="../src/mainwindow.ui" line="147"/>
         <source>Sa&amp;ve Filters</source>
         <translation>Sal&amp;va Filtri</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="151"/>
+        <location filename="../src/mainwindow.ui" line="152"/>
         <source>Suppressor configuration</source>
         <translation>Configurazione soppressori</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="156"/>
+        <location filename="../src/mainwindow.ui" line="157"/>
         <source>Cascad&amp;e</source>
         <translation>Cascad&amp;e</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="161"/>
+        <location filename="../src/mainwindow.ui" line="162"/>
         <source>&amp;Tile</source>
         <translation>&amp;Tile</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="166"/>
+        <location filename="../src/mainwindow.ui" line="167"/>
         <source>&amp;Find</source>
         <translation>&amp;Cerca</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="175"/>
+        <source>Tab Mode</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="38"/>
@@ -325,68 +330,68 @@ p, li { white-space: pre-wrap; }
         <translation>In funzione</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="149"/>
+        <location filename="../src/mainwindow.cpp" line="167"/>
         <source>File </source>
         <translation>File </translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="149"/>
+        <location filename="../src/mainwindow.cpp" line="167"/>
         <source> selected</source>
         <translation>selezionato</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="182"/>
+        <location filename="../src/mainwindow.cpp" line="200"/>
         <source>Filter pool has been modified!</source>
         <translation>Il registro dei filtri è stato modificato!</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="183"/>
+        <location filename="../src/mainwindow.cpp" line="201"/>
         <source>Do you want to save your filter pool?</source>
         <translation>Vuoi salvarlo?</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="186"/>
+        <location filename="../src/mainwindow.cpp" line="204"/>
         <source>Save on quit?</source>
         <translation>Salvataggio all&apos;uscita?</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="196"/>
+        <location filename="../src/mainwindow.cpp" line="214"/>
         <source>Filters not saved, not quitting...</source>
         <translation>Filtri non salvati, uscita annullata...</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="250"/>
+        <location filename="../src/mainwindow.cpp" line="268"/>
         <source>Warning</source>
         <translation>Attenzione</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="251"/>
+        <location filename="../src/mainwindow.cpp" line="269"/>
         <source>No action is possible without an active document!</source>
         <translation>Nessuna azione disponibile senza documento attivo!</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="413"/>
+        <location filename="../src/mainwindow.cpp" line="431"/>
         <source>Save</source>
         <translation>Salva</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="413"/>
+        <location filename="../src/mainwindow.cpp" line="431"/>
         <source>File exists
 Do you want to overwrite it?</source>
         <translation>Il file esiste. Vuoi sovrascriverlo?</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="490"/>
+        <location filename="../src/mainwindow.cpp" line="508"/>
         <source>Filters not saved</source>
         <translation>Filtri non salvati</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="495"/>
+        <location filename="../src/mainwindow.cpp" line="513"/>
         <source>Filters saved</source>
         <translation>Filtri salvati</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="504"/>
+        <location filename="../src/mainwindow.cpp" line="522"/>
         <source>Filters loaded</source>
         <translation>Filtri caricati</translation>
     </message>

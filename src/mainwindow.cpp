@@ -139,6 +139,24 @@ MDIChild *MainWindow::createMDIChild(const QString& fileName)
 }
 
 void
+MainWindow::on_actionTabMode_triggered ()
+{
+	if ( mdiArea->viewMode() == QMdiArea::TabbedView )
+	{
+		mdiArea->setViewMode( QMdiArea::SubWindowView );
+		actionCascade->setEnabled( true );
+		actionTile->setEnabled( true );
+	}
+	else
+	{
+		mdiArea->setViewMode( QMdiArea::TabbedView );
+		actionCascade->setEnabled( false );
+		actionTile->setEnabled( false);
+	}
+}
+
+
+void
 MainWindow::on_actionOpen_triggered ()
 {
 	QString fileName = QFileDialog::getOpenFileName(this);

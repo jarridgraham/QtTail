@@ -75,6 +75,7 @@ private slots:
 	void on_actionQuit_triggered();
 	void on_actionFind_triggered();
 	void on_actionReset_Highlighter_triggered();
+	void on_actionTabMode_triggered();
 
 	void newFilter();
 	void addFilter2Current(GenericFilter filter);
