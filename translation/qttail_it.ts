@@ -322,7 +322,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../src/mainwindow.ui" line="175"/>
         <source>Tab Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Modalità a tab</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="38"/>
