@@ -23,22 +23,17 @@
 bool
 GenericFilter::match (const QString & s) const
 {
-	qDebug() << "Match called";
 	if ( ! filterString.isEmpty() )
 	{
-		qDebug() << "filter string";
 		if ( s.contains(filterString) )
 		{
-			qDebug() << "Matched";
 			return true;
 		}
 	}
 	if ( ! filterReg.isEmpty() )
 	{
-		qDebug() << "regexp string:" << filterReg.pattern() << " s: " << s;
 		if ( filterReg.indexIn( s ) != -1 )
 		{
-			qDebug() << "regexp matched";
 			return true;
 		}
 	}

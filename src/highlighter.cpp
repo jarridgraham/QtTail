@@ -19,7 +19,7 @@
 #include <QDebug>
 #include "highlighter.h"
 
-Highlighter::Highlighter (QTextEdit* parent, QMap<GenericFilter, QTextCharFormat>* filters_ ): QSyntaxHighlighter(parent), filters(filters_)
+Highlighter::Highlighter (QTextDocument* parent, QMap<GenericFilter, QTextCharFormat>* filters_ ): QSyntaxHighlighter(parent), filters(filters_)
 {
 
 }
@@ -35,7 +35,7 @@ Highlighter::highlightBlock (const QString & text)
 	if ( text.isEmpty() ) 
 		return;
 	
-// 	qDebug() << "highlightBlock count: " << filters->count() << "text: " << text;
+//	qDebug() << "highlightBlock count: " << filters->count() << "text: " << text;
 
 	foreach (GenericFilter g, filters->keys() )
 	{

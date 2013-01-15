@@ -25,8 +25,9 @@
 #include <QMutexLocker>
 #include <QScopedPointer>
 #include <QDebug>
+#include <QDate>
 
-Tail::Tail (QString fileName, QObject* parent): QThread(parent), abort(false), counter(0),in(fileName), valid(true)
+Tail::Tail (QString fileName, QObject* parent): QThread(parent), abort(false), counter(0), numlines(-1),in(fileName), valid(true)
 {
 	if ( !in.open(QFile::ReadOnly | QFile::Text) )
 	{
@@ -69,6 +70,9 @@ Tail::goToPosition ()
 {
 	QStringList lines;
 	QString line;
+
+	QTime profiler;
+	profiler.start();
 	
 	while (  ! in.atEnd() )
 	{
@@ -76,11 +80,16 @@ Tail::goToPosition ()
 		//qDebug() << "line: " << line.trimmed();
 		lines.push_back ( line );
 
-		if ( lines.count() > 5 )
+		if ( numlines > 0 && lines.count() > numlines )
 			lines.pop_front();
+		
 	}
-	foreach(line,lines)
-		emit sendLine(line);
+	qDebug() << "Elapsed 1: " << profiler.elapsed();
+	sendStart( lines.join("") );
+
+	qDebug() << "Elapsed 2: " << profiler.elapsed();
+// 	foreach(line,lines)
+// 		emit sendLine(line);
 }
 
 void Tail::checkLine()
@@ -117,9 +126,7 @@ Tail::run ()
 
 			if (abort)
 				return;
-			
-// 			qDebug() << "Error? " << in.errorString();
-// 			qDebug() << "Sending line " << line;
+
 			if ( line.length() > 0 )
 				emit sendLine(line);
 

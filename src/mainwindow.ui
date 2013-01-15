@@ -52,6 +52,8 @@
     <addaction name="actionNew_filter"/>
     <addaction name="actionFilter_pool"/>
     <addaction name="separator"/>
+    <addaction name="actionStartingLines"/>
+    <addaction name="separator"/>
     <addaction name="actionFind"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
@@ -173,6 +175,14 @@
    </property>
    <property name="text">
     <string>Tab Mode</string>
+   </property>
+  </action>
+  <action name="actionStartingLines">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Starting lines</string>
    </property>
   </action>
  </widget>

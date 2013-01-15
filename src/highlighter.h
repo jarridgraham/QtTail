@@ -20,6 +20,7 @@
 #ifndef HIGHLIGHTER_H
 #define HIGHLIGHTER_H
 
+#include <QPlainTextEdit>
 #include <QSyntaxHighlighter>
 #include <QTextCharFormat>
 #include <QMap>
@@ -32,7 +33,7 @@ class Highlighter: public QSyntaxHighlighter
 protected:
 	void highlightBlock(const QString &text);
 public:
-	Highlighter (QTextEdit* parent, QMap<GenericFilter, QTextCharFormat>* filters_);
+	Highlighter (QTextDocument* parent, QMap<GenericFilter, QTextCharFormat>* filters_);
 	virtual ~ Highlighter ();
 };
 

@@ -22,6 +22,7 @@
 #include <QWidget>
 #include <QTextCharFormat>
 #include <QTextDocument>
+#include <QInputDialog>
 #include <QHash>
 
 #include "newfilter.h"
@@ -39,6 +40,8 @@ class MainWindow: public QMainWindow, private Ui::MainWindow
 	bool modified;
 	QDialog* findwindow;
 	QAction* separator;
+
+	int numLines;
 	
 	struct
 	{
@@ -76,6 +79,7 @@ private slots:
 	void on_actionFind_triggered();
 	void on_actionReset_Highlighter_triggered();
 	void on_actionTabMode_triggered();
+	void on_actionStartingLines_triggered();
 
 	void newFilter();
 	void addFilter2Current(GenericFilter filter);

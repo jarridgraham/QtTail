@@ -32,6 +32,7 @@ class Tail: public QThread
 	
 	bool abort;
 	int counter;
+	int numlines;
 	QMutex mutex;
 	
 	QFile in;
@@ -44,6 +45,7 @@ class Tail: public QThread
 	void goToPosition();
 
 signals:
+	void sendStart(QString line);
 	void sendLine(QString line);
 	void Error (QString arg);
 	
@@ -52,10 +54,9 @@ private slots:
 	void resetCounter();
 public slots:
 	void stopProcess();
-
 public:
 	Tail (QString fileName, QObject* parent);
-	//bool addFile(QString fileName);
+	void setNumLines(int numLines) { numlines = numLines; }
 	virtual void run();
 	bool isValid() const { return valid; }
 	QString error() const { return _error; }

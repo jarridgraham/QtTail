@@ -19,6 +19,7 @@
 #include "mdichild.h"
 #include <QDebug>
 #include <QFile>
+#include <QDate>
 #include <QTextCursor>
 
 void
@@ -26,14 +27,16 @@ MDIChild::closeEvent (QCloseEvent * event)
 {
 }
 
-MDIChild::MDIChild(const QString& fileName, int default_point_size): curFile(fileName), menu(NULL)
+MDIChild::MDIChild(const QString& fileName, int default_point_size, int numlines): curFile(fileName), menu(NULL)
 {
 	GoToPos();
 	
 	worker = new Tail(fileName, this);
 	if ( worker != NULL && worker->isValid() )
 	{
+		worker->setNumLines( numlines );
 		connect(worker, SIGNAL(sendLine(QString)), this, SLOT(receiveLine(QString)), Qt::QueuedConnection);
+		connect(worker, SIGNAL(sendStart(QString)), this, SLOT(receiveStart(QString)), Qt::QueuedConnection);
 		worker->start();
 
 		setWindowTitle(fileName);
@@ -44,14 +47,13 @@ MDIChild::MDIChild(const QString& fileName, int default_point_size): curFile(fil
 		f.setPointSize( default_point_size);
 		setFont( f );
 		
-		highlighter = new Highlighter(this, &filters);
+		highlighter = new Highlighter(document(), &filters);
 		if ( highlighter == NULL )
 		{
 			delete worker;
 			curFile = QString();
 			return;
 		}
-
 	}
 	else
 		curFile = QString();
@@ -83,6 +85,27 @@ void MDIChild::GoToPos(int position)
 	}
 }
 
+void MDIChild::receiveStart(QString start)
+{
+	QTime profiler;
+	profiler.start();
+	
+	setUpdatesEnabled(false);
+
+	qDebug() << "receive elapsed 1: " << profiler.elapsed();
+	
+	setPlainText( start );
+
+	qDebug() << "receive elapsed 2: " << profiler.elapsed();
+	
+	setUpdatesEnabled(true);
+
+	qDebug() << "receive elapsed 3: " << profiler.elapsed();
+
+	GoToPos();
+}
+
+
 
 void MDIChild::receiveLine (QString line)
 {
@@ -90,10 +113,12 @@ void MDIChild::receiveLine (QString line)
 
 	GoToPos();
 
+	qDebug() << "receiveline";
 	if ( ! toBeSuppressed( line ) )
 		//append( line );
 		textCursor().insertText(line);
-	
+
+	qDebug() << "Received!";
 	setTextCursor( position );
 }
 
@@ -162,7 +187,12 @@ bool MDIChild::addFilter(GenericFilter filter)
 
 	doAddFilter( filter );
 
+	QTime profiler;
+	profiler.start();
 	highlighter->rehighlight();
+
+	qDebug() << "Rehighlight: " <<  profiler.elapsed();
+	
 	suppress();
 	return true;
 }
@@ -194,8 +224,14 @@ void MDIChild::updateAllFilters(QList<GenericFilter> newfilters)
 		doAddFilter( it );
 	}
 
+	QTime profiler;
+	profiler.start();
+	
 	highlighter->rehighlight();
+
+	qDebug() << "Rehighlight: " <<  profiler.elapsed();
 	suppress();
 }
+
 
 

@@ -114,16 +114,30 @@ MainWindow::InsertIntoMenu (const QString & fileName, MDIChild* child )
 	child->setMenu ( nMenu );
 }
 
+void
+MainWindow::on_actionStartingLines_triggered ()
+{
+	bool ok;
+	
+	int tNumLines = QInputDialog::getInt(this, tr("Lines to display"),
+                                          tr("Lines to display when openin files (-1 means ALL):"), numLines, -1, 100000, 100, &ok);
+
+	if ( ok )
+		numLines = tNumLines;
+	
+}
+
+
 MDIChild *MainWindow::createMDIChild(const QString& fileName)
 {
-	MDIChild *child = new MDIChild(fileName);
+	MDIChild *child = new MDIChild(fileName, 8, numLines);
 
 	if ( child == NULL ) return child;
 	
 	if ( child->isValid() )
 	{
-
-		child->setFontWeight( 8 ); //Defined in NewFilter too
+		//TODO
+		//child->setFontWeight( 8 ); //Defined in NewFilter too
 		child->setAttribute(Qt::WA_DeleteOnClose);
 		//connect(child,SIGNAL(destroyed(QObject*)),this,SLOT(mdiDestroyed(QObject*)));
 		QMdiSubWindow* sub = mdiArea->addSubWindow(child);

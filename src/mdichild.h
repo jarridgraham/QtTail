@@ -20,7 +20,8 @@
 #ifndef _MDICHILD__H
 #define _MDICHILD__H
 
-#include <QTextEdit>
+// #include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QList>
 #include <QMap>
 #include "highlighter.h"
@@ -28,7 +29,7 @@
 #include "tail.h"
 #include "format.h"
 
-class MDIChild: public QTextEdit
+class MDIChild: public QPlainTextEdit
 {
 	Q_OBJECT
 	
@@ -47,7 +48,7 @@ protected:
 	void closeEvent(QCloseEvent *event);
 	
 public:
-	MDIChild(const QString& fileName, int defaultpointsize = 8);
+	MDIChild(const QString& fileName, int defaultpointsize = 8, int numlines = -1);
 	virtual ~MDIChild();
 
 	void resetFilters() { updateAllFilters( QList<GenericFilter>() ); }
@@ -64,6 +65,7 @@ public slots:
 	void removeFilter(GenericFilter filter);
 	void updateAllFilters(QList<GenericFilter> newfilters);
 	void receiveLine(QString line);
+	void receiveStart(QString start);
 };
 
 #endif
