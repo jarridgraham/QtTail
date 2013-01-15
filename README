@@ -1,32 +1,14 @@
-Qt4 GUI Template
-----------------------
+This is a GUI counterpart of the tail -f command. Qt4 is required.
+No Warranty is provided.
 
-You need QT 4.3 or higher
+This program is Free Software.
 
--- Build instructions --
+--------------------------------------------------------------------------
+** KNOWN PROBLEMS                                                       **
+--------------------------------------------------------------------------
 
-cd /where/your/project/is/installed
-qmake -project
-qmake
-make
-
-./<appname>
-
-
--- Tutorials and resources --
-
-Qt online docs
-http://doc.trolltech.com/4.4rc1/index.html
-
-Trolltech tutorial
-http://doc.trolltech.com/4.3/tutorial.html
-
-Tutorial for beginners
-http://sector.ynet.sk/qt4-tutorial/
-
-Qt Forum
-http://www.qtforum.org/
-
-Qt Centre
-http://www.qtcentre.org/
-
+Extremely large files are untested, and you may found that the program is
+too slow to handle them correctly.
+Tail -f is implemented by polling. This is not optimal in any way, but it
+took too long to implement blocking I/O on Linux and Windows.
+Contribution are welcome.
